@@ -1,11 +1,12 @@
 ---
 layout: page
 title: project 2
-description: a project with a background image and giscus comments
-img: assets/img/3.jpg
+description: Visual SLAM, IMU, CV, C++, Bundle Adjustment
+img: assets/img/mh01_vio.png
+redirect: https://www.notion.so/Visual-SLAM-Loop-Closure-and-Relocalization-ef7be594875a47e598cf261b64e9b684?pvs=4
 importance: 2
 category: work
-giscus_comments: true
+# giscus_comments: true
 ---
 
 Every project has a beautiful feature showcase page.

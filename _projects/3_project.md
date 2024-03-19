@@ -1,11 +1,11 @@
 ---
 layout: page
-title: project 3
-description: a project that redirects to another website
-img: assets/img/7.jpg
-redirect: https://unsplash.com
-importance: 3
-category: work
+title: Visual-SLAM Loop Closure and Relocalization
+description: Visual SLAM, Loop Closure, Relocalization, ORB-SLAM, Stereo Camera, Bundle Adjustment
+img: assets/img/V1_1_easy_VO_3d.png
+redirect: https://www.notion.so/Visual-SLAM-Loop-Closure-and-Relocalization-ef7be594875a47e598cf261b64e9b684?pvs=4
+importance: 1
+category: Work
 ---
 
 Every project has a beautiful feature showcase page.

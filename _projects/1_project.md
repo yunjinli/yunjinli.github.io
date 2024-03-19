@@ -1,9 +1,10 @@
 ---
 layout: page
-title: project 1
-description: a project with a background image
-img: assets/img/12.jpg
-importance: 1
+title: Graph Attention Network for Social Navigation (GAT4SN)
+description: RL, Mobile Robot, Deep Learning, Motion Planing, GNN
+redirect: https://www.notion.so/Graph-Attention-Network-for-Social-Navigation-GAT4SN-c5c34e824e214fdea5558ef39ad06471?pvs=4
+img: assets/img/gat4sn_test_case_40_H20.gif
+importance: 3
 category: work
 related_publications: true
 ---
