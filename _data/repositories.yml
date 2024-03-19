@@ -1,12 +1,9 @@
 github_users:
-  - torvalds
-  - alshedivat
+  - yunjinli
 
 github_repos:
-  - alshedivat/al-folio
-  - twbs/bootstrap
-  - jekyll/jekyll
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - jpswalsh/academicons
-  - mathjax/MathJax
+  - yunjinli/vxp
+  - yunjinli/4dgsam
+  - yunjinli/visual-slam
+  - yunjinli/tum_visnav22_project
+  - yunjinli/gat4sn
