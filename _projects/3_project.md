@@ -5,7 +5,7 @@ description: Visual SLAM, Loop Closure, Relocalization, ORB-SLAM, Stereo Camera,
 img: assets/img/V1_1_easy_VO_3d.png
 redirect: https://www.notion.so/Visual-SLAM-Loop-Closure-and-Relocalization-ef7be594875a47e598cf261b64e9b684?pvs=4
 importance: 1
-category: Work
+category: work
 ---
 
 Every project has a beautiful feature showcase page.

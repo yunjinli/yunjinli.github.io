@@ -1,6 +1,6 @@
 ---
 layout: page
-title: project 2
+title: Visual-Inertial Tracking using Preintegrated Factors
 description: Visual SLAM, IMU, CV, C++, Bundle Adjustment
 img: assets/img/mh01_vio.png
 redirect: https://www.notion.so/Visual-SLAM-Loop-Closure-and-Relocalization-ef7be594875a47e598cf261b64e9b684?pvs=4
