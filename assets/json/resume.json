@@ -41,7 +41,6 @@
       "area": "Artificial Intelligence, Computer Vision",
       "studyType": "M. Sc in Robotics, Cognition, Intelligence",
       "startDate": "2021-10-01",
-      // "endDate": "2024-09-30",
       "score": "10",
       "courses": ["Machine Learning", "Introduction to Deep Learning", "Introduction to Artificial Intelligence", "Advanced Deep Learning for Robotics", "Robotics", "Robot Motion Planning", "Computer Vision for Multi‑View Geometry", "Vision‑Based Navigation (PR)", "The Evolution of Motion Estimation and Real‑time 3D Reconstruction (SE)"]
     },
@@ -60,10 +59,10 @@
   "publications": [
     {
       "name": "VXP: Voxel-Cross-Pixel Large-scale Image-LiDAR Place Recognition",
-      "publisher": "",
-      "releaseDate": "",
-      "url": "",
-      "summary": ""
+      "publisher": "arXiv",
+      "releaseDate": "2024-03-22",
+      "url": "https://yunjinli.github.io/projects-vxp/",
+      "summary": "We propose a novel Voxel-Cross-Pixel (VXP) approach, which establishes voxel and pixel correspondences in a self-supervised manner and brings them into a shared feature space. We achieve state-of-the-art performance in cross-modal retrieval on the Oxford RobotCar, ViViD++ datasets and KITTI benchmark, while maintaining high uni-modal global localization accuracy."
     }
   ],
   "skills": [

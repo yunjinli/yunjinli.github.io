@@ -470,10 +470,8 @@ jsonresume:
   - education
   - publications
   - projects
-  - volunteer
-  - awards
-  - certificates
   - skills
   - languages
-  - interests
-  - references
+  # - interests
+  # - references
+  - Research Interests
