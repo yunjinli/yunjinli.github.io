@@ -3,7 +3,7 @@ layout: page
 title: Jetson Nano Car  
 description: ROS, Motor Control, SolidWorks, URDF, CV, Jetson Nano, Mobile Robot, Arduino, PID.
 img: assets/img/jetson_nano_car.png
-redirect: https://www.notion.so/f560fd4acac14dc9955fe5273937fc5a?v=482d1f7e46ad45419ce11f008a59c4f1&p=80197a7ba7004c7aaf81e14b667356ab&pm=c
+redirect: https://hip-fin-125.notion.site/ROS-Project-Jetson-Nano-Car-1-Introduction-Camera-Calibration-80197a7ba7004c7aaf81e14b667356ab
 importance: 1
 category: fun
 ---
