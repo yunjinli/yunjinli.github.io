@@ -3,7 +3,7 @@ github_users:
 
 github_repos:
   - yunjinli/vxp
-  - yunjinli/4dgsam
+  - yunjinli/SADG-SegmentAnyDynamicGaussian
   - yunjinli/visual-slam
   - yunjinli/tum_visnav22_project
   - yunjinli/gat4sn
