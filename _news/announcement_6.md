@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our work "SADG: Segment Any Dynamic Gaussian Without Object Trackers" is on arXiv. Check out the [paper](https://arxiv.org/abs/2411.19290) and [project page](https://yunjinli.github.io/project-sadg/).
+Our work "SADG: Segment Any Dynamic Gaussian Without Object Trackers" based on my Master's thesis is on arXiv. Check out the [paper](https://arxiv.org/abs/2411.19290) and [project page](https://yunjinli.github.io/project-sadg/).
