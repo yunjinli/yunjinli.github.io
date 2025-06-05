@@ -1,8 +1,8 @@
 ---
 layout: post
-date: 2024-11-04 09:00:00-0000
+date: 2024-11-05 05:00:00-0000
 inline: true
 related_posts: false
 ---
 
-I started my PhD at Infineon.
+Our work [Voxel-Cross-Pixel Large-scale Image-LiDAR Place Recognition](https://yunjinli.github.io/projects-vxp/) is accepted to 3DV 2025. See you in Singapore. 
