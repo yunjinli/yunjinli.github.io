@@ -6,7 +6,7 @@ title: blank # the website title (if blank, full name will be used instead)
 first_name: Jim Yun-Jin 
 middle_name: 
 last_name: Li
-email: yunjin.li@tum.de
+email: yunjin.li0817@gmail.com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design.
 footer_text: >
@@ -77,7 +77,8 @@ mastodon_username: # your mastodon instance+username in the format instance.tld/
 linkedin_username: jim-li-9072ba212 # your LinkedIn user name
 telegram_username: # your Telegram user name
 scholar_userid: JFgQcQcAAAAJ # your Google Scholar ID
-semanticscholar_id: 2292977988 # your Semantic Scholar ID
+# semanticscholar_id: 2292977988 # your Semantic Scholar ID
+semanticscholar_id: # your Semantic Scholar ID
 whatsapp_number: # your WhatsApp number (full phone number in international format. Omit any zeroes, brackets, or dashes when adding the phone number in international format.)
 orcid_id: 0009-0009-5535-6171 # your ORCID ID
 medium_username: # your Medium username
@@ -85,7 +86,8 @@ quora_username: # your Quora username
 publons_id: # your ID on Publons
 lattes_id: # your ID on Lattes (Brazilian Lattes CV)
 osf_id: # your OSF ID
-research_gate_profile: Yun-Jin-Li # your profile on ResearchGate
+# research_gate_profile: Yun-Jin-Li # your profile on ResearchGate
+research_gate_profile: # your profile on ResearchGate
 scopus_id: # your profile on Scopus
 blogger_url: # your blogger URL
 work_url: # work page URL
