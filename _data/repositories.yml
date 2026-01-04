@@ -2,8 +2,9 @@ github_users:
   - yunjinli
 
 github_repos:
+  - yunjinli/TRASE
+  - yunjinli/DeformableMetalSplatter
   - yunjinli/vxp
-  - yunjinli/SADG-SegmentAnyDynamicGaussian
   - yunjinli/visual-slam
   - yunjinli/tum_visnav22_project
   - yunjinli/gat4sn
