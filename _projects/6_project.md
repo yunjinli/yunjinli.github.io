@@ -1,11 +1,13 @@
 ---
 layout: page
-title: Jetson Nano Car  
-description: ROS, Motor Control, SolidWorks, URDF, CV, Jetson Nano, Mobile Robot, Arduino, PID.
-img: assets/img/jetson_nano_car.png
-redirect: https://hip-fin-125.notion.site/ROS-Project-Jetson-Nano-Car-1-Introduction-Camera-Calibration-80197a7ba7004c7aaf81e14b667356ab
-importance: 5
+title: Deformable MetalSplatter
+description: Render deformable 3D Gaussian Splats using Metal on Apple platforms
+video: assets/video/deform_metalsplatter_demo.mp4
+redirect: https://github.com/yunjinli/DeformableMetalSplatter
+github: yunjinli/DeformableMetalSplatter
+importance: 1
 category: fun
+selected: true
 ---
 
 Every project has a beautiful feature showcase page.

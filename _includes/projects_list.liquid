@@ -1,0 +1,72 @@
+<div class="publications">
+  {% assign sorted_projects = site.projects | sort: "importance" %}
+  <ol class="bibliography">
+  {% for project in sorted_projects %}
+    {% if project.selected %}
+      <li>
+        <div class="row">
+          <div class="col-sm-2 preview">
+            {% if project.video %}
+              {% include video.liquid path=project.video class="preview z-depth-1 rounded" controls=true autoplay=true loop=true muted=true %}
+            {% elsif project.img %}
+              {% include figure.liquid loading="eager" path=project.img sizes="200px" class="preview z-depth-1 rounded" zoomable=false alt=project.title %}
+            {% endif %}
+          </div>
+
+          <div class="col-sm-10">
+            <div class="title">
+              {% if project.redirect %}
+                <a href="{{ project.redirect }}">{{ project.title }}</a>
+              {% else %}
+                <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+              {% endif %}
+            </div>
+            
+            <div class="periodical">
+              {{ project.description }}
+            </div>
+
+            <div class="links">
+              {% if project.redirect %}
+                {% if project.redirect contains '://' %}
+                  <a href="{{ project.redirect }}" class="btn btn-sm z-depth-0" role="button">
+                    <i class="fas fa-globe"></i> Project
+                  </a>
+                {% else %}
+                  <a href="{{ project.redirect | prepend: '/assets/html/' | relative_url }}" class="btn btn-sm z-depth-0" role="button">
+                    <i class="fas fa-globe"></i> Project
+                  </a>
+                {% endif %}
+              {% elsif project.url %}
+                <a href="{{ project.url | relative_url }}" class="btn btn-sm z-depth-0" role="button">
+                   <i class="fas fa-globe"></i> Project
+                </a>
+              {% endif %}
+              
+              {% if project.github %}
+                {% if project.github contains '://' %}
+                  <a href="{{ project.github }}" class="btn btn-sm z-depth-0" role="button">
+                    <i class="fa-brands fa-github"></i> Code
+                  </a>
+                {% else %}
+                  <a href="https://github.com/{{ project.github }}" class="btn btn-sm z-depth-0" role="button">
+                    <i class="fa-brands fa-github"></i> Code
+                  </a>
+                {% endif %}
+              {% endif %}
+
+              {% if project.github %}
+                 {% unless project.github contains '://' %}
+                  <a href="https://github.com/{{ project.github }}" aria-label="{{ project.github }} github stars">
+                    <img src="https://img.shields.io/github/stars/{{ project.github }}?style=social&label=Stars" alt="{{ project.github }} GitHub stars">
+                  </a>
+                 {% endunless %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </li>
+    {% endif %}
+  {% endfor %}
+  </ol>
+</div>

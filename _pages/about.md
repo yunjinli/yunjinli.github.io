@@ -1,6 +1,7 @@
 ---
 layout: about
 title: about
+nav_icon: fas fa-user
 permalink: /
 # subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 
@@ -15,6 +16,7 @@ profile:
 
 news: true # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
+projects: true
 social: true # includes social icons at the bottom of the page
 ---
 
@@ -26,3 +28,14 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
 Hello! It's Jim here :wave: <br />
 I'm interested in Multimodal Scene Understanding & Reasoning and Embodied Robot Interaction.
 Previously, I was a Master's student at [TUM](https://www.tum.de/en/). During my Master's studies, I completed three research projects [VXP](https://yunjinli.github.io/projects-vxp/), [TRASE](https://yunjinli.github.io/project-sadg/), and [UniLoc](https://yan-xia.github.io/projects/UniLoc/) in Computer Vision Group, led by [Prof. Dr. Daniel Cremers](https://cvg.cit.tum.de/members/cremers). 
+
+<br>
+<div style="display: flex; justify-content: left; align-items: center; gap: 20px;">
+  <a href="https://nthu-en.site.nthu.edu.tw/">
+    <img src="{{ '/assets/img/nthu_logo.png' | relative_url }}" style="height: 60px;" alt="NTHU Logo">
+  </a>
+  <a href="https://www.tum.de/en/">
+    <img src="{{ '/assets/img/tum_logo.png' | relative_url }}" style="height: 60px;" alt="TUM Logo">
+  </a>
+</div>
+<br>
