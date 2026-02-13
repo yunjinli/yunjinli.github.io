@@ -26,8 +26,12 @@ Put your address / P.O. box / other info right below your picture. You can also 
 
 Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them. -->
 Hello! It's Jim here :wave: <br />
-I'm interested in Multimodal Scene Understanding & Reasoning and Embodied Robot Interaction.
-Previously, I was a Master's student at [TUM](https://www.tum.de/en/). During my Master's studies, I completed three research projects [VXP](https://yunjinli.github.io/projects-vxp/), [TRASE](https://yunjinli.github.io/project-sadg/), and [UniLoc](https://yan-xia.github.io/projects/UniLoc/) in Computer Vision Group, led by [Prof. Dr. Daniel Cremers](https://cvg.cit.tum.de/members/cremers). 
+
+I am a PhD student at [Learning Systems and Robotics Lab (LSY)](https://www.dynsyslab.org/) at TUM, supervised by [Prof. Dr. Angela Schoellig](https://www.dynsyslab.org/prof-angela-schoellig/). My research centers on Safe Embodied Robot Interaction on Humanoids.
+
+<!-- <br> -->
+
+Previously, I was a Master's student at [TUM](https://www.tum.de/en/). During my Master's studies, I focused on giving machine richer spatial understanding. I completed three research projects [VXP (3DV 2025)](https://yunjinli.github.io/projects-vxp/), [TRASE (3DV 2026)](https://yunjinli.github.io/project-sadg/), and [UniLoc](https://yan-xia.github.io/projects/UniLoc/) in Computer Vision Group, led by [Prof. Dr. Daniel Cremers](https://cvg.cit.tum.de/members/cremers). 
 
 <br>
 <div style="display: flex; justify-content: left; align-items: center; gap: 20px;">
@@ -36,6 +40,9 @@ Previously, I was a Master's student at [TUM](https://www.tum.de/en/). During my
   </a>
   <a href="https://www.tum.de/en/">
     <img src="{{ '/assets/img/tum_logo.png' | relative_url }}" style="height: 60px;" alt="TUM Logo">
+  </a>
+  <a href="https://www.dynsyslab.org/">
+    <img src="{{ '/assets/img/learnsyslab_logo.PNG' | relative_url }}" style="height: 60px;" alt="LSY Logo">
   </a>
 </div>
 <br>

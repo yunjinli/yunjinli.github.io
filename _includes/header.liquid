@@ -55,7 +55,6 @@
               {% endif %}
             </a>
           </li>
-
           {% assign sorted_pages = site.pages | sort: 'nav_order' %}
           {% for p in sorted_pages %}
             {% if p.nav and p.autogen == null %}
@@ -109,6 +108,11 @@
               {% endif %}
             {% endif %}
           {% endfor %}
+          <li class="nav-item">
+            <a class="nav-link" href="https://drive.google.com/file/d/1K-ULcPXUE6sL2g0z0NZnBReANlMqJvha/view?usp=drive_link" target="_blank">
+              <i class="fa-solid fa-file-pdf"></i>&nbsp;CV
+            </a>
+          </li>
           {% if site.enable_darkmode %}
             <li class="toggle-container">
               <button id="light-toggle" title="Change theme">
