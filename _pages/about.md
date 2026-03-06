@@ -44,5 +44,8 @@ Previously, I was a Master's student at [TUM](https://www.tum.de/en/). During my
   <a href="https://www.dynsyslab.org/">
     <img src="{{ '/assets/img/learnsyslab_logo.PNG' | relative_url }}" style="height: 60px;" alt="LSY Logo">
   </a>
+  <a href="https://mcml.ai/">
+    <img src="{{ '/assets/img/MCML_Logo_os.png' | relative_url }}" style="height: 20px;" alt="MCML Logo">
+  </a>
 </div>
 <br>
