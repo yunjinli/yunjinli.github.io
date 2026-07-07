@@ -33,6 +33,8 @@ I am a PhD student at [Learning Systems and Robotics Lab (LSY)](https://www.dyns
 
 Previously, I was a Master's student at [TUM](https://www.tum.de/en/). During my Master's studies, I focused on giving machine richer spatial understanding. I completed three research projects [VXP (3DV 2025)](https://yunjinli.github.io/projects-vxp/), [TRASE (3DV 2026)](https://yunjinli.github.io/project-sadg/), and [UniLoc](https://yan-xia.github.io/projects/UniLoc/) in Computer Vision Group, led by [Prof. Dr. Daniel Cremers](https://cvg.cit.tum.de/members/cremers). 
 
+I am always open to supervising excellent and motivative student for thesis, guided research, research internship. You can always find our open topics [here](https://www.ce.cit.tum.de/lsy/open-research-projects/). If you want to work with me, please send me an email describing your area of interest and attach your CV and up-to-date transcripts. I am also open to any research collaboration :smile:
+
 <br>
 <div style="display: flex; justify-content: left; align-items: center; gap: 20px;">
   <a href="https://nthu-en.site.nthu.edu.tw/">
