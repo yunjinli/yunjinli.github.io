@@ -93,7 +93,7 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
         { "cmd": "/about", "window": "about", "key": "0", "desc": "back to top" },
         { "cmd": "/latest_news", "window": "news", "key": "1", "print": "news", "text": "news", "previewCount": 3, "desc": "latest news (tab/ctrl+b 1 shows all of it)" },
         { "cmd": "/publications", "window": "publications", "key": "2", "print": "publications", "text": "publications", "desc": "papers & publications (tab/ctrl+b 2 for the full preview)" },
-        { "cmd": "/projects", "window": "projects", "key": "3", "print": "projects", "text": "projects", "desc": "projects (tab/ctrl+b 3 for the full preview)" },
+        { "cmd": "/projects", "window": "projects", "key": "3", "print": "projects", "text": "projects", "desc": "selected projects (tab/ctrl+b 3 shows all of it)" },
         { "cmd": "/cv", "url": "{{ site.cv_url }}", "previewUrl": "{{ site.cv_preview_url }}", "desc": "preview my CV here" },
         { "cmd": "/repo", "fetchUrl": "{{ '/repositories/' | relative_url }}", "desc": "github repositories" },
         { "cmd": "/apply-gr", "mailTo": "{{ site.email }}", "mailSubject": "[Guided Research Application]", "desc": "email me about guided research" },

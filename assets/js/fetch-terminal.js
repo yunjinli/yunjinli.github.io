@@ -258,43 +258,6 @@
       scrollPaneBottom();
     }
 
-    // Plain-text summary (title/authors/venue, no images) — what typing
-    // /publications or /projects prints inline. Clicking the matching status-bar
-    // tab (or ctrl+b 2/3) instead opens the dedicated window with the full
-    // rich preview (renderBibliography, above), so the reader picks the format.
-    function buildBibliographyLines(containerId) {
-      var container = document.getElementById(containerId);
-      if (!container) return null;
-      var items = container.querySelectorAll("ol.bibliography > li");
-      if (!items.length) return null;
-
-      return Array.prototype.map.call(items, function (li) {
-        var titleEl2 = li.querySelector(".title");
-        var authorEl = li.querySelector(".author");
-        var venueEl = li.querySelector(".periodical");
-        // Project titles already link to their page. Paper titles don't, so
-        // prefer the bib entry's own `html={...}` field (rendered as the
-        // globe-icon "Project" button in _layouts/bib.liquid) — that's the
-        // author-chosen canonical link, not just whichever button is first.
-        var projectIcon = li.querySelector(".links i.fa-globe");
-        var projectAnchor = projectIcon ? projectIcon.closest("a") : null;
-        var linkEl = (titleEl2 && titleEl2.querySelector("a")) || projectAnchor || li.querySelector(".links a[href]");
-
-        var titleText = (titleEl2 ? titleEl2.textContent : "").replace(/\s+/g, " ").trim();
-        var titleHtml = linkEl
-          ? '<a href="' + linkEl.getAttribute("href") + '" target="_blank" rel="noopener">' + escapeHtml(titleText) + "</a>"
-          : escapeHtml(titleText);
-
-        var meta = [];
-        if (authorEl && authorEl.textContent.trim()) meta.push(authorEl.textContent.replace(/\s+/g, " ").trim());
-        if (venueEl && venueEl.textContent.trim()) meta.push(venueEl.textContent.replace(/\s+/g, " ").trim());
-
-        var line = '<span class="fetch-terminal__bullet">&raquo;</span> ' + titleHtml;
-        if (meta.length) line += '<br><span class="fetch-terminal__meta">' + escapeHtml(meta.join(" · ")) + "</span>";
-        return line;
-      });
-    }
-
     // /cv: embed Google Drive's own PDF viewer inline via its iframe-embeddable
     // /preview URL, plus a link out to the normal share link for a full-size view.
     function appendPreview(entry) {
@@ -396,6 +359,12 @@
         newsLines && newsLines.length ? renderLines(newsLines) : renderMessage("nothing to show here yet.");
         return;
       }
+      if (entry.print === "projects") {
+        // Unfiltered — every project, not just the selected ones typing
+        // /projects shows. Mirrors the news/1:news split above.
+        renderBibliography("about-projects-full");
+        return;
+      }
       if (entry.print) {
         renderBibliography("about-" + entry.print);
         return;
@@ -481,15 +450,14 @@
         return c.cmd === value.toLowerCase();
       })[0];
 
-      // Typing /news, /publications, /projects prints plain text right here —
-      // it does NOT switch tabs. Use the status bar (or ctrl+b <number>) to open
-      // the dedicated window with the full rich preview instead.
-      if (exact && exact.text === "publications") {
-        // Same full rich preview (gif previews, buttons) as the dedicated
-        // window/tab, appended below whatever's already printed here — just
-        // without switching tabs to get there.
+      // Typing /publications or /projects prints the same rich preview (gif
+      // previews, buttons) as the dedicated window/tab, appended below
+      // whatever's already printed here — it does NOT switch tabs. /projects
+      // shows only the selected project(s); the 3:projects tab (or ctrl+b 3)
+      // shows every project instead.
+      if (exact && (exact.text === "publications" || exact.text === "projects")) {
         printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
-        appendBibliography("about-publications");
+        appendBibliography("about-" + exact.text);
         return;
       }
 
@@ -506,13 +474,6 @@
         if (fullNewsCount > newsPreview.length) {
           printLine('<span class="fetch-terminal__meta">' + fullNewsCount + " total &mdash; see 1:news (or ctrl+b 1) for all of it.</span>");
         }
-        return;
-      }
-
-      if (exact && exact.text) {
-        printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
-        var textLines = buildBibliographyLines("about-" + exact.text);
-        printLinesStaggered(textLines && textLines.length ? textLines : ["nothing to show here yet."]);
         return;
       }
 

@@ -83,6 +83,11 @@ layout: default
         </h2>
         {% include projects_list.liquid %}
       </div>
+      <!-- Unfiltered copy for the terminal's 3:projects window (typed /projects
+           uses the selected-only one above instead) -->
+      <div id="about-projects-full">
+        {% include projects_list_full.liquid %}
+      </div>
     {% endif %}
     
     <!-- Social icons now live in the header, next to the name -->
