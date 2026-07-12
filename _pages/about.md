@@ -149,7 +149,9 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
     <span class="fetch-terminal__tmuxwin" data-window="projects">3:projects</span>
     <span class="fetch-terminal__tmuxwin" data-window="repositories">4:repositories</span>
     <span class="fetch-terminal__tmuxbar-spacer"></span>
-    <button type="button" class="fetch-terminal__tmuxbtn" id="fetch-terminal-next-btn" title="next window (ctrl+b n)" aria-label="next window">&#8594;</button>
-    <button type="button" class="fetch-terminal__tmuxbtn" id="fetch-terminal-new-btn" title="new window (ctrl+b c)" aria-label="new window">&#43;</button>
+    <span class="fetch-terminal__tmuxbtn-group">
+      <button type="button" class="fetch-terminal__tmuxbtn" id="fetch-terminal-next-btn" title="next window (ctrl+b n)" aria-label="next window">&#8594;</button>
+      <button type="button" class="fetch-terminal__tmuxbtn" id="fetch-terminal-new-btn" title="new window (ctrl+b c)" aria-label="new window">&#43;</button>
+    </span>
   </div>
 </div>

@@ -205,31 +205,7 @@ html[data-theme="dark"] .fetch-terminal {
 }
 
 .fetch-terminal__pane {
-  // A fixed height (not max-height) so the terminal box stays the exact same
-  // size across every window — short content just leaves blank space below,
-  // long content (publications/repositories/CV preview) scrolls internally,
-  // rather than the whole box growing/shrinking as you switch tabs.
-  height: min(60vh, 480px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 0.35rem;
-
-  // Thin, theme-matched scrollbar (Firefox + WebKit/Blink).
-  scrollbar-width: thin;
-  scrollbar-color: var(--term-border) transparent;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--term-border);
-    border-radius: 4px;
-  }
+  min-height: 8rem;
 }
 
 .fetch-terminal__printed-line {
@@ -271,10 +247,7 @@ html[data-theme="dark"] .fetch-terminal {
   iframe {
     display: block;
     width: 100%;
-    // A little shorter than .fetch-terminal__pane's own max-height, so the
-    // iframe (which scrolls its own PDF internally) mostly fits in one
-    // screen instead of forcing the pane to scroll just to reveal it.
-    height: min(50vh, 420px);
+    height: min(70vh, 600px);
     border: 1px solid var(--term-border);
     border-radius: 6px;
   }
@@ -417,37 +390,41 @@ html[data-theme="dark"] .fetch-terminal {
 }
 
 // Tap targets for ctrl+b n / ctrl+b c, since touch keyboards have no ctrl key.
-// Pinned to the right edge (position: sticky within the scrollable bar) so
-// they're still reachable without scrolling once enough windows are open to
-// overflow a narrow phone screen.
-.fetch-terminal__tmuxbtn {
+// The pair is wrapped in one sticky group (not each button sticky on its own)
+// so it's a single solid, opaque block pinned to the right edge — two
+// separately-positioned sticky elements left a gap between them that let a
+// sliver of whatever window tab had scrolled underneath peek through.
+.fetch-terminal__tmuxbtn-group {
   position: sticky;
   right: 0;
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.3rem;
+  padding-left: 0.5rem;
+  background: var(--term-bar);
+  transition: background-color 0.3s ease;
+}
+
+.fetch-terminal__tmuxbtn {
   flex: 0 0 auto;
   min-width: 1.8rem;
   min-height: 1.8rem;
   padding: 0.15rem 0.5rem;
   border: none;
   border-radius: 4px;
-  background: var(--term-bar);
+  background: transparent;
   color: var(--term-muted);
   font: inherit;
   font-size: 0.9rem;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover,
   &:focus-visible {
     color: var(--term-bg);
     background: var(--term-accent);
   }
-}
-
-// Two sticky siblings would otherwise both dock to the same right edge and
-// overlap — offset the leftmost of the two by the rightmost one's footprint.
-#fetch-terminal-next-btn {
-  right: 2.1rem;
 }
 
 // Stream the terminal output in line-by-line, like it's being printed live.
