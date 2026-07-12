@@ -112,6 +112,51 @@ html[data-theme="dark"] .fetch-terminal {
   color: var(--term-muted);
 }
 
+// ctrl+b c's blank "new" window: a little fastfetch-style boot banner.
+// Both of these are <pre> tags, which _base.scss otherwise styles as code
+// blocks (background/padding/color) — cancel that out here.
+.fetch-terminal__figlet,
+.fetch-terminal__asciilogo {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.fetch-terminal__figlet {
+  margin: 0 0 0.75rem;
+  color: inherit;
+  font-size: 0.7rem;
+  line-height: 1.15;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.fetch-terminal__newbody {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.fetch-terminal__asciilogo {
+  margin: 0;
+  color: inherit;
+  font-size: 7px;
+  line-height: 1;
+  white-space: pre;
+}
+
+// Flags an over-capacity stat (memory/disk usage past 100%), fastfetch-style.
+.fetch-terminal__danger {
+  color: var(--term-prompt);
+  font-weight: 600;
+}
+
+.fetch-terminal__newinfo {
+  min-width: 240px;
+  padding-top: 0.15rem;
+}
+
 .fetch-terminal__logos {
   display: flex;
   align-items: center;
@@ -159,10 +204,8 @@ html[data-theme="dark"] .fetch-terminal {
   gap: 0.4rem;
 }
 
-.fetch-terminal__printed {
-  margin: 0 0 0.9rem;
-  padding-left: 0.1rem;
-  border-left: 2px solid var(--term-border);
+.fetch-terminal__pane {
+  min-height: 8rem;
 }
 
 .fetch-terminal__printed-line {
@@ -194,6 +237,32 @@ html[data-theme="dark"] .fetch-terminal {
 
 .fetch-terminal__bullet {
   color: var(--term-prompt);
+}
+
+// /cv: Google Drive's embedded viewer renders on its own white chrome
+// regardless of site theme, so it gets a border to stay visually contained.
+.fetch-terminal__iframe-wrap {
+  line-height: 0;
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: min(70vh, 600px);
+    border: 1px solid var(--term-border);
+    border-radius: 6px;
+  }
+}
+
+// Publications/projects windows show the real bibliography markup (preview
+// gifs, abstract/links buttons, badges) so it matches the dedicated sub-page
+// exactly — that means switching back to the site's normal font here instead
+// of the terminal's monospace, and trimming the page-level top margin.
+.fetch-terminal__bibliography {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  &.publications {
+    margin-top: 0;
+  }
 }
 
 .fetch-terminal__meta {
@@ -275,6 +344,85 @@ html[data-theme="dark"] .fetch-terminal {
   text-align: right;
 }
 
+// tmux-style status bar: click a window, or press ctrl+b then its number.
+.fetch-terminal__tmuxbar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.4rem 0.9rem;
+  background: var(--term-bar);
+  border-top: 1px solid var(--term-border);
+  font-size: 0.78rem;
+  overflow-x: auto;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease;
+
+  &.is-prefix {
+    box-shadow: inset 0 0 0 1px var(--term-prompt);
+  }
+}
+
+.fetch-terminal__tmuxbar-session {
+  color: var(--term-key);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fetch-terminal__tmuxwin {
+  color: var(--term-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+
+  &:hover {
+    color: var(--term-text);
+  }
+
+  &.is-active {
+    color: var(--term-bg);
+    background: var(--term-accent);
+    font-weight: 600;
+  }
+}
+
+.fetch-terminal__tmuxbar-spacer {
+  flex: 1 1 auto;
+}
+
+// Tap targets for ctrl+b n / ctrl+b c, since touch keyboards have no ctrl key.
+// Pinned to the right edge (position: sticky within the scrollable bar) so
+// they're still reachable without scrolling once enough windows are open to
+// overflow a narrow phone screen.
+.fetch-terminal__tmuxbtn {
+  position: sticky;
+  right: 0;
+  flex: 0 0 auto;
+  min-width: 1.8rem;
+  min-height: 1.8rem;
+  padding: 0.15rem 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--term-bar);
+  color: var(--term-muted);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--term-bg);
+    background: var(--term-accent);
+  }
+}
+
+// Two sticky siblings would otherwise both dock to the same right edge and
+// overlap — offset the leftmost of the two by the rightmost one's footprint.
+#fetch-terminal-next-btn {
+  right: 2.1rem;
+}
+
 // Stream the terminal output in line-by-line, like it's being printed live.
 @keyframes fetch-line-in {
   from {
@@ -288,7 +436,7 @@ html[data-theme="dark"] .fetch-terminal {
 }
 
 .fetch-terminal__info > *,
-.fetch-terminal__cmd > p:not([data-dynamic]) {
+.fetch-terminal__pane > p:not([data-dynamic]) {
   opacity: 0;
   animation: fetch-line-in 0.25s ease-out forwards;
 }
@@ -301,7 +449,10 @@ html[data-theme="dark"] .fetch-terminal {
   }
 }
 
-.fetch-terminal__cmd {
+// Only the very first, hand-authored "about" boot-up gets this slow multi-second
+// reveal. Every later window switch (including back to "about") is rebuilt by
+// fetch-terminal.js using .fetch-terminal__printed-line's much snappier timing.
+.fetch-terminal__pane {
   @for $i from 1 through 4 {
     > p:not([data-dynamic]):nth-child(#{$i}) {
       animation-delay: #{1930 + ($i - 1) * 550}ms;
@@ -319,7 +470,7 @@ html[data-theme="dark"] .fetch-terminal {
 
 @media (prefers-reduced-motion: reduce) {
   .fetch-terminal__info > *,
-  .fetch-terminal__cmd > p:not([data-dynamic]),
+  .fetch-terminal__pane > p:not([data-dynamic]),
   .fetch-terminal__promptline {
     animation: none;
     opacity: 1;

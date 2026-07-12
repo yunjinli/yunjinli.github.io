@@ -16,9 +16,11 @@
   </head>
 
   <!-- Body -->
-  <body class="{% if site.navbar_fixed %}fixed-top-nav{% endif %} {% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}">
-    <!-- Header -->
-    {% include header.liquid %}
+  <body class="{% if site.navbar_fixed and page.permalink != '/' %}fixed-top-nav{% endif %} {% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}">
+    <!-- Header (hidden on the about page: the terminal there is the nav) -->
+    {% unless page.permalink == '/' %}
+      {% include header.liquid %}
+    {% endunless %}
 
     <!-- Content -->
     <div class="container mt-5" role="main">

@@ -93,6 +93,8 @@ scopus_id: # your profile on Scopus
 blogger_url: # your blogger URL
 work_url: # work page URL
 tum_vcard_url: https://campus.tum.de/tumonline/visitenkarte.show_vcard?pPersonenId=D96E59393E1D002A&pPersonenGruppe=3 # TUM Online business card URL
+cv_url: https://drive.google.com/file/d/1K-ULcPXUE6sL2g0z0NZnBReANlMqJvha/view?usp=drive_link # CV link used in the navbar and the terminal's /cv command
+cv_preview_url: https://drive.google.com/file/d/1K-ULcPXUE6sL2g0z0NZnBReANlMqJvha/preview # embeddable Drive preview, used by the terminal's /cv command
 keybase_username: # your keybase user name
 wikidata_id: # your wikidata id
 wikipedia_id: # your wikipedia id (Case sensitive)

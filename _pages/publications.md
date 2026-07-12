@@ -4,7 +4,7 @@ permalink: /publications/
 title: publications
 nav_icon: fas fa-book
 description: 
-nav: true
+nav: false # navigation now happens through the about page's terminal instead
 nav_order: 2
 ---
 

@@ -4,7 +4,7 @@ permalink: /repositories/
 title: repositories
 nav_icon: fa-brands fa-github
 description: 
-nav: true
+nav: false # navigation now happens through the about page's terminal instead
 nav_order: 4
 ---
 
