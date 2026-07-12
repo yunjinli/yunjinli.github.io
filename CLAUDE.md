@@ -141,8 +141,3 @@ script over the `websockets` + `requests` libraries (navigate, dispatch
 synthetic input/keydown events into `#fetch-terminal-input`, inspect the DOM via
 `Runtime.evaluate`). Clean up the Chrome process and any stray screenshots
 afterward.
-
-## Commit policy
-
-Commit messages in this repo must stay plain — no AI/Claude mentions, no
-`Co-Authored-By` trailer.
