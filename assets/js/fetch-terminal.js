@@ -361,7 +361,6 @@
       tab.textContent = WINDOWS.length - 1 + ":new";
       tab.addEventListener("click", function () {
         switchWindow("new");
-        input.focus();
       });
       // Insert before the spacer (i.e. right after the last window tab), not
       // at the very end — the sticky next/new buttons live after the spacer.
@@ -450,10 +449,12 @@
       printLine("command not found: " + escapeHtml(value) + ". type /help to see available commands.");
     }
 
+    // Deliberately not calling input.focus() from any of these three handlers:
+    // on phones, focusing the input pops the on-screen keyboard, which is a
+    // jarring surprise when the user only meant to switch tabs/panes.
     Array.prototype.forEach.call(tmuxBar.querySelectorAll(".fetch-terminal__tmuxwin"), function (el) {
       el.addEventListener("click", function () {
         switchWindow(el.getAttribute("data-window"));
-        input.focus();
       });
     });
 
@@ -462,13 +463,11 @@
     if (nextBtn) {
       nextBtn.addEventListener("click", function () {
         nextWindow();
-        input.focus();
       });
     }
     if (newBtn) {
       newBtn.addEventListener("click", function () {
         createNewWindow();
-        input.focus();
       });
     }
 
