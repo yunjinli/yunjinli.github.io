@@ -297,15 +297,18 @@
 
     // /cv: embed Google Drive's own PDF viewer inline via its iframe-embeddable
     // /preview URL, plus a link out to the normal share link for a full-size view.
-    function renderPreview(entry) {
-      pane.innerHTML =
+    function appendPreview(entry) {
+      var wrap = document.createElement("div");
+      wrap.setAttribute("data-dynamic", "true");
+      wrap.innerHTML =
         '<div class="fetch-terminal__printed-line fetch-terminal__iframe-wrap">' +
         '<iframe src="' + entry.previewUrl + '" loading="lazy" allow="autoplay"></iframe>' +
         "</div>" +
         '<p class="fetch-terminal__printed-line fetch-terminal__printed-more" style="animation-delay:120ms">' +
         'open full view &rarr; <a href="' + entry.url + '" target="_blank" rel="noopener">' + entry.url + "</a>" +
         "</p>";
-      scrollPaneTop();
+      pane.appendChild(wrap);
+      scrollPaneBottom();
     }
 
     // ctrl+b c's blank "new" window: a fastfetch-style boot banner (figlet
@@ -519,7 +522,8 @@
       }
 
       if (exact && exact.previewUrl) {
-        renderPreview(exact);
+        printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
+        appendPreview(exact);
         return;
       }
 
