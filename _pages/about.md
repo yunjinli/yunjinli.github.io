@@ -26,10 +26,11 @@ fetch_terminal: true # loads the interactive command prompt for the terminal wid
 Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
 
 Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them. -->
-<div class="fetch-terminal">
+{% capture fetch_terminal_info_text %}&copy; Copyright {{ site.time | date: '%Y' }} {{ site.first_name }} {{ site.middle_name }} {{ site.last_name }}. {{ site.footer_text }}{% if site.impressum_path %} <a href="{{ site.url }}{{ site.baseurl }}{{ site.impressum_path }}">Impressum</a>.{% endif %}{% if site.last_updated %} Last updated: {{ 'now' | date: '%B %d, %Y' }}.{% endif %}{% endcapture %}
+<div class="fetch-terminal fetch-terminal--identity">
   <div class="fetch-terminal__bar">
     <span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span>
-    <span class="fetch-terminal__title" id="fetch-terminal-title">jim@lsy-tum: ~</span>
+    <span class="fetch-terminal__title">jim@lsy-tum: ~</span>
   </div>
   <div class="fetch-terminal__body">
     <div class="fetch-terminal__photo">
@@ -38,6 +39,7 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
     <div class="fetch-terminal__info">
       <!-- <p>jim<span class="fetch-terminal__prompt-sym" style="margin:0;">@</span>lsy-tum</p> -->
       <!-- <p class="fetch-terminal__rule">-----------------</p> -->
+      <p><span class="k">User</span>: Jim Li</p>
       <p><span class="k">OS</span>: PhD Student @ <a href="https://www.tum.de/en/">TUM</a></p>
       <p><span class="k">Host</span>: <a href="https://www.dynsyslab.org/">Learning Systems and Robotics Lab (LSY)</a></p>
       <p><span class="k">Advisor</span>: <a href="https://www.dynsyslab.org/prof-angela-schoellig/">Prof. Dr. Angela Schoellig</a></p>
@@ -54,9 +56,16 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
       </div>
     </div>
   </div>
+</div>
+
+<div class="fetch-terminal fetch-terminal--window" id="fetch-terminal-window">
+  <div class="fetch-terminal__bar">
+    <span class="dot dot--red"></span><span class="dot dot--yellow"></span><span class="dot dot--green"></span>
+    <span class="fetch-terminal__title" id="fetch-terminal-title">jim@lsy-tum: ~</span>
+  </div>
   <div class="fetch-terminal__cmd">
     <div class="fetch-terminal__pane" id="fetch-terminal-pane">
-      <p><span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>cat welcome.txt</p>
+      <p class="fetch-terminal__cmdline"><span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span><span class="fetch-terminal__typed">cat welcome.txt</span></p>
       <p>Hello! It's Jim here :wave: I am a PhD student at <a href="https://www.dynsyslab.org/">Learning Systems and Robotics Lab (LSY)</a> at TUM, supervised by <a href="https://www.dynsyslab.org/prof-angela-schoellig/">Prof. Dr. Angela Schoellig</a>. My research centers on Safe Embodied Robot Interaction on Humanoids. More broadly, I work on Real2Sim2Real frameworks for learning complex embodied interactions, such as manipulating multi-joint articulated objects found in daily life.</p>
       <p>Previously, I was a Master's student at <a href="https://www.tum.de/en/">TUM</a>. During my Master's studies, I focused on giving machine richer spatial understanding. I completed three research projects <a href="https://yunjinli.github.io/projects-vxp/">VXP (3DV 2025)</a>, <a href="https://yunjinli.github.io/project-sadg/">TRASE (3DV 2026)</a>, and <a href="https://yan-xia.github.io/projects/UniLoc/">UniLoc</a> in Computer Vision Group, led by <a href="https://cvg.cit.tum.de/members/cremers">Prof. Dr. Daniel Cremers</a>.</p>
       <p>I am always open to supervising excellent and motivative student for thesis, guided research, research internship. You can always find our open topics <a href="https://www.ce.cit.tum.de/lsy/open-research-projects/">here</a>. If you want to work with me, please send me an email describing your area of interest and attach your CV and up-to-date transcripts. I am also open to any research collaboration :smile:</p>
@@ -82,16 +91,17 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
     <script type="application/json" id="fetch-terminal-commands">
       [
         { "cmd": "/about", "window": "about", "key": "0", "desc": "back to top" },
-        { "cmd": "/news", "window": "news", "key": "1", "print": "news", "text": "news", "desc": "news & updates (tab/ctrl+b 1 for the dedicated window)" },
+        { "cmd": "/latest_news", "window": "news", "key": "1", "print": "news", "text": "news", "previewCount": 3, "desc": "latest news (tab/ctrl+b 1 shows all of it)" },
         { "cmd": "/publications", "window": "publications", "key": "2", "print": "publications", "text": "publications", "desc": "papers & publications (tab/ctrl+b 2 for the full preview)" },
         { "cmd": "/projects", "window": "projects", "key": "3", "print": "projects", "text": "projects", "desc": "projects (tab/ctrl+b 3 for the full preview)" },
-        { "cmd": "/repositories", "window": "repositories", "key": "4", "fetchUrl": "{{ '/repositories/' | relative_url }}", "desc": "github repositories" },
         { "cmd": "/cv", "url": "{{ site.cv_url }}", "previewUrl": "{{ site.cv_preview_url }}", "desc": "preview my CV here" },
+        { "cmd": "/repo", "fetchUrl": "{{ '/repositories/' | relative_url }}", "desc": "github repositories" },
         { "cmd": "/apply-gr", "mailTo": "{{ site.email }}", "mailSubject": "[Guided Research Application]", "desc": "email me about guided research" },
         { "cmd": "/apply-thesis", "mailTo": "{{ site.email }}", "mailSubject": "[Master Thesis Application]", "desc": "email me about a thesis" },
         { "cmd": "/apply-fp", "mailTo": "{{ site.email }}", "mailSubject": "[Research Internship Application]", "desc": "email me about a research internship" },
         { "cmd": "/dark", "themeMode": "dark", "desc": "switch the page to dark mode" },
         { "cmd": "/bright", "themeMode": "light", "desc": "switch the page to light mode" },
+        { "cmd": "/info", "infoText": {{ fetch_terminal_info_text | strip_newlines | jsonify }}, "desc": "site info & copyright" },
         { "cmd": "/help", "desc": "list available commands" },
         { "cmd": "/clear", "desc": "clear extra output in this window" }
       ]
@@ -147,7 +157,6 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
     <span class="fetch-terminal__tmuxwin" data-window="news">1:news</span>
     <span class="fetch-terminal__tmuxwin" data-window="publications">2:publications</span>
     <span class="fetch-terminal__tmuxwin" data-window="projects">3:projects</span>
-    <span class="fetch-terminal__tmuxwin" data-window="repositories">4:repositories</span>
     <span class="fetch-terminal__tmuxbar-spacer"></span>
     <span class="fetch-terminal__tmuxbtn-group">
       <button type="button" class="fetch-terminal__tmuxbtn" id="fetch-terminal-next-btn" title="next window (ctrl+b n)" aria-label="next window">&#8594;</button>

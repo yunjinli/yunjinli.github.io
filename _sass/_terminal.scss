@@ -3,6 +3,7 @@
 // Kept in the DOM (not removed from the page) so fetch-terminal.js can still
 // read their content — just visually hidden here.
 #about-news,
+#about-news-full,
 #about-publications,
 #about-projects {
   display: none;
@@ -43,6 +44,39 @@ html[data-theme="dark"] .fetch-terminal {
   --term-border: #292e42;
 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+// The interactive tmux window pops open shortly after the identity card above
+// it is already on screen, then the "cat welcome.txt" boot text streams in
+// (see the animation-delay rules on .fetch-terminal__pane further down).
+@keyframes fetch-terminal-open {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(14px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.012) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.fetch-terminal--window {
+  transform-origin: top center;
+  // 1.5s is just a safety-net default in case JS hasn't run yet — fetch-terminal.js
+  // measures how long the identity card's own fields take to finish streaming in
+  // and overrides this delay to match, so the window always pops open right
+  // after the card, however many fields it has.
+  animation: fetch-terminal-open 0.5s cubic-bezier(0.22, 1, 0.36, 1) 1.5s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fetch-terminal--window {
+    animation: none;
+  }
 }
 
 .fetch-terminal__bar {
@@ -270,6 +304,25 @@ html[data-theme="dark"] .fetch-terminal {
   font-size: 0.85em;
 }
 
+// /news: date and event text in their own aligned columns instead of running
+// the date inline right before the text.
+.fetch-terminal__newsrow {
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+}
+
+.fetch-terminal__newsdate {
+  flex: 0 0 auto;
+  width: 6.5rem;
+  white-space: nowrap;
+}
+
+.fetch-terminal__newsevent {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .fetch-terminal__input-wrap {
   position: relative;
   flex: 1 1 auto;
@@ -440,7 +493,7 @@ html[data-theme="dark"] .fetch-terminal {
 }
 
 .fetch-terminal__info > *,
-.fetch-terminal__pane > p:not([data-dynamic]) {
+.fetch-terminal__pane > p:not([data-dynamic]):not(.fetch-terminal__cmdline) {
   opacity: 0;
   animation: fetch-line-in 0.25s ease-out forwards;
 }
@@ -456,11 +509,45 @@ html[data-theme="dark"] .fetch-terminal {
 // Only the very first, hand-authored "about" boot-up gets this slow multi-second
 // reveal. Every later window switch (including back to "about") is rebuilt by
 // fetch-terminal.js using .fetch-terminal__printed-line's much snappier timing.
+//
+// These are deliberately just safe fallback defaults (in case JS hasn't run
+// yet, or fails to): fetch-terminal.js's scheduleBootSequence() measures how
+// long the identity card actually takes to finish, then chains the window
+// pop-open → command typing → each of these lines → the prompt off of that
+// real measurement (via inline animation-delay), so the whole sequence stays
+// in sync no matter how the identity card or bio text changes later.
 .fetch-terminal__pane {
   @for $i from 1 through 4 {
     > p:not([data-dynamic]):nth-child(#{$i}) {
-      animation-delay: #{1930 + ($i - 1) * 550}ms;
+      animation-delay: #{2900 + ($i - 1) * 550}ms;
     }
+  }
+}
+
+// The "cat welcome.txt" line itself is shown immediately (not block-faded) —
+// the .fetch-terminal__typed span inside it does its own typewriter reveal.
+.fetch-terminal__cmdline {
+  opacity: 1;
+}
+
+.fetch-terminal__typed {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  border-right: 2px solid var(--term-text);
+  animation: fetch-typewriter 0.9s steps(15, end) 2100ms forwards;
+}
+
+@keyframes fetch-typewriter {
+  0%,
+  99% {
+    border-right-color: var(--term-text);
+  }
+  100% {
+    width: 15ch;
+    border-right-color: transparent;
   }
 }
 
@@ -469,14 +556,20 @@ html[data-theme="dark"] .fetch-terminal {
 .fetch-terminal__promptline {
   opacity: 0;
   animation: fetch-line-in 0.25s ease-out forwards;
-  animation-delay: 4130ms;
+  animation-delay: 5100ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fetch-terminal__info > *,
-  .fetch-terminal__pane > p:not([data-dynamic]),
+  .fetch-terminal__pane > p:not([data-dynamic]):not(.fetch-terminal__cmdline),
   .fetch-terminal__promptline {
     animation: none;
     opacity: 1;
+  }
+
+  .fetch-terminal__typed {
+    animation: none;
+    width: 15ch;
+    border-right: none;
   }
 }

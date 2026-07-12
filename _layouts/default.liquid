@@ -49,8 +49,10 @@
       {% endif %}
     </div>
 
-    <!-- Footer -->
-    {% include footer.liquid %}
+    <!-- Footer (hidden on the about page: see it there via the terminal's /info command) -->
+    {% unless page.permalink == '/' %}
+      {% include footer.liquid %}
+    {% endunless %}
 
     <!-- JavaScripts -->
     {% include scripts/jquery.liquid %}

@@ -51,6 +51,11 @@ layout: default
         </h2>
         {% include news.liquid limit=true %}
       </div>
+      <!-- Unfiltered copy for the terminal's 1:news window (typed /news uses
+           the shorter, limited one above instead) -->
+      <div id="about-news-full">
+        {% include news.liquid %}
+      </div>
     {% endif %}
 
     <!-- Latest posts -->

@@ -1,5 +1,5 @@
 // Interactive, tmux-style command prompt for the fetch-terminal widget on the about page.
-// Windows (about/news/publications/repositories/...) are rendered inside a single
+// Windows (about/news/publications/projects/...) are rendered inside a single
 // pane, switched via typed commands, clicking the status bar, or ctrl+b <number>.
 (function () {
   function escapeHtml(str) {
@@ -28,17 +28,20 @@
       return c.window;
     });
 
-    // Snapshot of the "about" window's original, hand-authored lines (with its
-    // charming slow boot-up animation baked into the page's CSS) so we can
-    // restore it quickly later without replaying that multi-second intro.
-    var aboutLines = Array.prototype.map.call(pane.children, function (el) {
-      return el.innerHTML;
-    });
+    // Captured live (see switchWindow) every time the reader leaves "about",
+    // so coming back restores whatever was actually there a moment ago —
+    // including any /news, /publications, ... output typed into it — rather
+    // than resetting to the pristine boot-time bio and losing that history.
+    var aboutSnapshot = null;
 
     var currentWindow = "about";
     var activeIndex = -1;
     var prefixActive = false;
     var cache = {};
+    // Flips true the moment a real person does anything with the terminal —
+    // used to bail out of the auto-demo (below) the instant someone doesn't
+    // just want to watch it type by itself.
+    var userInteracted = false;
 
     function matches(value) {
       if (!value || value[0] !== "/") return [];
@@ -96,16 +99,20 @@
       setActive(0);
     }
 
-    // The pane scrolls internally once its content is taller than its capped
-    // max-height (see _terminal.scss). Appending a line should reveal that new
-    // line (scroll to bottom, like a real terminal); swapping to a fresh
-    // window's content should start the reader at the top.
+    // The pane no longer scrolls internally (it just grows with its content),
+    // so "keep the new output visible" means scrolling the page itself.
+    // Appending a line brings the prompt (right after the new output) into
+    // view, like a real terminal following its own output; switching to a
+    // fresh window scrolls the terminal box's top back into view instead.
     function scrollPaneTop() {
-      pane.scrollTop = 0;
+      var windowBox = document.getElementById("fetch-terminal-window");
+      if (windowBox) windowBox.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function scrollPaneBottom() {
-      pane.scrollTop = pane.scrollHeight;
+      // The tmux bar (not the prompt line) is the terminal's true bottom edge —
+      // scrolling that into view brings the whole box, prompt included, into frame.
+      tmuxBar.scrollIntoView({ behavior: "smooth", block: "end" });
     }
 
     function printLine(html) {
@@ -143,6 +150,30 @@
       scrollPaneTop();
     }
 
+    // Switching back to "about" should show the finished state instantly —
+    // the text was already there a moment ago, so replaying the multi-second
+    // boot animation (typewriter included) every time would be wrong. Only
+    // the very first render (the actual page load) gets that treatment.
+    // Forces every line (and the typed span) to its finished, settled state —
+    // used right before snapshotting "about" so leaving mid-animation never
+    // freezes a half-typed/half-faded frame into the saved snapshot.
+    function freezeAboutPane() {
+      Array.prototype.forEach.call(pane.children, function (child) {
+        child.style.opacity = "1";
+        child.style.animation = "none";
+      });
+      var typed = pane.querySelector(".fetch-terminal__typed");
+      if (typed) {
+        typed.style.width = "15ch";
+        typed.style.borderRightColor = "transparent";
+      }
+    }
+
+    function restoreAboutSnapshot() {
+      if (aboutSnapshot !== null) pane.innerHTML = aboutSnapshot;
+      scrollPaneTop();
+    }
+
     function renderMessage(html) {
       // data-dynamic keeps this out of the old hand-authored "about" boot
       // sequence's slow, position-based CSS delays (it would otherwise land on
@@ -151,8 +182,11 @@
       scrollPaneTop();
     }
 
-    function buildNewsLines() {
-      var container = document.getElementById("about-news");
+    // containerId picks the source: "about-news" (short, limited to
+    // site.announcements.limit — used by typed /news) or "about-news-full"
+    // (every item — used by the 1:news window/tab).
+    function buildNewsLines(containerId) {
+      var container = document.getElementById(containerId);
       if (!container) return null;
       var rows = container.querySelectorAll("table tr");
       if (!rows.length) return null;
@@ -160,8 +194,14 @@
       return Array.prototype.map.call(rows, function (row) {
         var date = row.querySelector("th");
         var body = row.querySelector("td");
-        var dateHtml = date ? '<span class="fetch-terminal__meta">' + escapeHtml(date.textContent.trim()) + "</span> " : "";
-        return dateHtml + (body ? body.innerHTML.trim() : "");
+        var dateText = date ? escapeHtml(date.textContent.trim()) : "";
+        var bodyHtml = body ? body.innerHTML.trim() : "";
+        return (
+          '<span class="fetch-terminal__newsrow">' +
+          '<span class="fetch-terminal__meta fetch-terminal__newsdate">' + dateText + "</span>" +
+          '<span class="fetch-terminal__newsevent">' + bodyHtml + "</span>" +
+          "</span>"
+        );
       });
     }
 
@@ -189,6 +229,33 @@
         target.appendChild(clone);
       });
       scrollPaneTop();
+    }
+
+    // Same rich content as renderBibliography, but appended (like every other
+    // typed command's output) instead of replacing the pane — so typing
+    // /publications keeps whatever was already printed above it.
+    function appendBibliography(containerId) {
+      var container = document.getElementById(containerId);
+      var list = container ? container.querySelector("ol.bibliography") : null;
+      if (!list || !list.children.length) {
+        printLine("nothing to show here yet.");
+        return;
+      }
+
+      var wrap = document.createElement("div");
+      wrap.className = "publications fetch-terminal__bibliography";
+      wrap.setAttribute("data-dynamic", "true");
+      var ol = document.createElement("ol");
+      ol.className = "bibliography";
+      wrap.appendChild(ol);
+      Array.prototype.forEach.call(list.children, function (li, i) {
+        var clone = li.cloneNode(true);
+        clone.classList.add("fetch-terminal__printed-line");
+        clone.style.animationDelay = i * 90 + "ms";
+        ol.appendChild(clone);
+      });
+      pane.appendChild(wrap);
+      scrollPaneBottom();
     }
 
     // Plain-text summary (title/authors/venue, no images) — what typing
@@ -258,12 +325,20 @@
       scrollPaneTop();
     }
 
+    // /repo: not a window/tab anymore, just a typed-only shortcut that fetches
+    // the (same-origin, static) repositories page and drops its content into
+    // whatever pane is currently open. Cached after the first load.
     function fetchRepositories(entry, done) {
       if (cache.repositories) {
         done(cache.repositories);
         return;
       }
-      renderMessage("loading repositories &hellip;");
+      var placeholder = document.createElement("p");
+      placeholder.setAttribute("data-dynamic", "true");
+      placeholder.innerHTML = "loading repositories &hellip;";
+      pane.appendChild(placeholder);
+      scrollPaneBottom();
+
       fetch(entry.fetchUrl)
         .then(function (res) {
           return res.text();
@@ -273,10 +348,11 @@
           var article = doc.querySelector(".post article");
           var content = article ? article.innerHTML : "<p>could not load repositories.</p>";
           cache.repositories = content;
+          placeholder.remove();
           done(content);
         })
         .catch(function () {
-          renderMessage('failed to load repositories. <a href="' + entry.fetchUrl + '">open the page directly</a>.');
+          placeholder.innerHTML = 'failed to load repositories. <a href="' + entry.fetchUrl + '">open the page directly</a>.';
         });
     }
 
@@ -299,16 +375,21 @@
       })[0];
       if (!entry || win === currentWindow) return;
 
+      if (currentWindow === "about") {
+        freezeAboutPane();
+        aboutSnapshot = pane.innerHTML;
+      }
+
       currentWindow = win;
       highlightTab(win);
       setTitle(win);
 
       if (win === "about") {
-        renderLines(aboutLines);
+        restoreAboutSnapshot();
         return;
       }
       if (entry.print === "news") {
-        var newsLines = buildNewsLines();
+        var newsLines = buildNewsLines("about-news-full");
         newsLines && newsLines.length ? renderLines(newsLines) : renderMessage("nothing to show here yet.");
         return;
       }
@@ -319,12 +400,6 @@
       if (win === "new") {
         renderNewPane();
         return;
-      }
-      if (entry.fetchUrl) {
-        fetchRepositories(entry, function (html) {
-          pane.innerHTML = html;
-          scrollPaneTop();
-        });
       }
     }
 
@@ -406,9 +481,34 @@
       // Typing /news, /publications, /projects prints plain text right here —
       // it does NOT switch tabs. Use the status bar (or ctrl+b <number>) to open
       // the dedicated window with the full rich preview instead.
+      if (exact && exact.text === "publications") {
+        // Same full rich preview (gif previews, buttons) as the dedicated
+        // window/tab, appended below whatever's already printed here — just
+        // without switching tabs to get there.
+        printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
+        appendBibliography("about-publications");
+        return;
+      }
+
+      if (exact && exact.text === "news") {
+        printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
+        // exact.previewCount (set on the /latest_news command in about.md) is
+        // the one parameter controlling how many show here — shorter than
+        // even the about page's own news limit; the 1:news tab (or ctrl+b 1)
+        // is where to see all of it.
+        var allNews = buildNewsLines("about-news") || [];
+        var newsPreview = allNews.slice(0, exact.previewCount || allNews.length);
+        printLinesStaggered(newsPreview.length ? newsPreview : ["nothing to show here yet."]);
+        var fullNewsCount = (buildNewsLines("about-news-full") || []).length;
+        if (fullNewsCount > newsPreview.length) {
+          printLine('<span class="fetch-terminal__meta">' + fullNewsCount + " total &mdash; see 1:news (or ctrl+b 1) for all of it.</span>");
+        }
+        return;
+      }
+
       if (exact && exact.text) {
         printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
-        var textLines = exact.text === "news" ? buildNewsLines() : buildBibliographyLines("about-" + exact.text);
+        var textLines = buildBibliographyLines("about-" + exact.text);
         printLinesStaggered(textLines && textLines.length ? textLines : ["nothing to show here yet."]);
         return;
       }
@@ -420,6 +520,18 @@
 
       if (exact && exact.previewUrl) {
         renderPreview(exact);
+        return;
+      }
+
+      if (exact && exact.fetchUrl) {
+        printLine('<span class="fetch-terminal__prompt-sym">jim@lsy-tum:~$</span>' + escapeHtml(value));
+        fetchRepositories(exact, function (html) {
+          var wrap = document.createElement("div");
+          wrap.setAttribute("data-dynamic", "true");
+          wrap.innerHTML = html;
+          pane.appendChild(wrap);
+          scrollPaneBottom();
+        });
         return;
       }
 
@@ -446,6 +558,11 @@
         return;
       }
 
+      if (exact && exact.infoText) {
+        printLine(exact.infoText);
+        return;
+      }
+
       printLine("command not found: " + escapeHtml(value) + ". type /help to see available commands.");
     }
 
@@ -454,6 +571,7 @@
     // jarring surprise when the user only meant to switch tabs/panes.
     Array.prototype.forEach.call(tmuxBar.querySelectorAll(".fetch-terminal__tmuxwin"), function (el) {
       el.addEventListener("click", function () {
+        userInteracted = true;
         switchWindow(el.getAttribute("data-window"));
       });
     });
@@ -462,21 +580,25 @@
     // without an easy ctrl+b (touch keyboards have no reliable ctrl key).
     if (nextBtn) {
       nextBtn.addEventListener("click", function () {
+        userInteracted = true;
         nextWindow();
       });
     }
     if (newBtn) {
       newBtn.addEventListener("click", function () {
+        userInteracted = true;
         createNewWindow();
       });
     }
 
     input.addEventListener("input", function () {
+      userInteracted = true;
       renderGhost();
       renderSuggestions();
     });
 
     input.addEventListener("keydown", function (e) {
+      userInteracted = true;
       if (prefixActive) {
         prefixActive = false;
         tmuxBar.classList.remove("is-prefix");
@@ -545,8 +667,102 @@
     });
 
     cmdBox.addEventListener("click", function (e) {
+      userInteracted = true;
       if (e.target.tagName !== "A") input.focus();
     });
+
+    // Types text into the prompt one character at a time, like someone
+    // actually typing, then "presses enter". Bails out cleanly at any point
+    // if userInteracted flips true — a real visitor always wins over the demo.
+    function typeIntoInput(text, done) {
+      var i = 0;
+      var iv = setInterval(function () {
+        if (userInteracted) {
+          clearInterval(iv);
+          return;
+        }
+        i++;
+        input.value = text.slice(0, i);
+        renderGhost();
+        renderSuggestions();
+        if (i >= text.length) {
+          clearInterval(iv);
+          setTimeout(function () {
+            if (userInteracted) return;
+            list.hidden = true;
+            ghost.textContent = "";
+            run(text);
+            if (done) done();
+          }, 450);
+        }
+      }, 80);
+    }
+
+    // A quiet, self-guided tour: once the welcome.txt boot text has finished
+    // streaming in, type /news and show it, then type /publications and show
+    // that too — so a first-time visitor sees what the terminal can do without
+    // having to already know these commands exist.
+    function runAutoDemo() {
+      var script = ["/latest_news", "/publications", "/info", "/help"];
+
+      function step(i) {
+        if (i >= script.length || userInteracted || currentWindow !== "about") return;
+        typeIntoInput(script[i], function () {
+          setTimeout(function () {
+            step(i + 1);
+          }, 1800);
+        });
+      }
+
+      step(0);
+    }
+
+    // Chains the whole boot sequence off of measurements instead of hardcoded
+    // magic numbers, so it stays in sync no matter how the identity card's
+    // fastfetch fields or the welcome.txt bio text change later:
+    //   identity card finishes streaming in
+    //     -> the tmux window pops open
+    //       -> "cat welcome.txt" types itself out
+    //         -> each bio paragraph streams in
+    //           -> the prompt line appears -> the auto-demo begins
+    (function scheduleBootSequence() {
+      var windowBox = document.getElementById("fetch-terminal-window");
+      var info = document.querySelector(".fetch-terminal__info");
+      var typed = document.querySelector(".fetch-terminal__typed");
+      if (!windowBox || !info || !info.lastElementChild) return;
+
+      function finishTime(el, fallbackDuration) {
+        if (!el) return 0;
+        var cs = getComputedStyle(el);
+        var delay = parseFloat(cs.animationDelay) || 0;
+        var duration = parseFloat(cs.animationDuration) || fallbackDuration || 0;
+        return delay + duration;
+      }
+
+      var t = finishTime(info.lastElementChild) + 0.1;
+      windowBox.style.animationDelay = t + "s";
+      t += 0.5 + 0.1; // the window's own pop-open animation, plus a small pause
+
+      if (typed) {
+        var charCount = typed.textContent.length;
+        var typingDuration = Math.max(0.4, charCount * 0.06);
+        typed.style.animationDuration = typingDuration + "s";
+        typed.style.animationTimingFunction = "steps(" + charCount + ", end)";
+        typed.style.animationDelay = t + "s";
+        t += typingDuration + 0.2;
+      }
+
+      Array.prototype.forEach.call(pane.children, function (child) {
+        if (child.classList.contains("fetch-terminal__cmdline") || child.hasAttribute("data-dynamic")) return;
+        child.style.animationDelay = t + "s";
+        t += 0.55;
+      });
+
+      promptLine.style.animationDelay = t + "s";
+      t += 0.25 + 0.8; // the prompt's own fade-in, plus a beat before the demo starts
+
+      setTimeout(runAutoDemo, t * 1000);
+    })();
   }
 
   if (document.readyState === "loading") {
