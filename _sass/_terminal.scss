@@ -205,7 +205,31 @@ html[data-theme="dark"] .fetch-terminal {
 }
 
 .fetch-terminal__pane {
-  min-height: 8rem;
+  // A fixed height (not max-height) so the terminal box stays the exact same
+  // size across every window — short content just leaves blank space below,
+  // long content (publications/repositories/CV preview) scrolls internally,
+  // rather than the whole box growing/shrinking as you switch tabs.
+  height: min(60vh, 480px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.35rem;
+
+  // Thin, theme-matched scrollbar (Firefox + WebKit/Blink).
+  scrollbar-width: thin;
+  scrollbar-color: var(--term-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--term-border);
+    border-radius: 4px;
+  }
 }
 
 .fetch-terminal__printed-line {
@@ -247,7 +271,10 @@ html[data-theme="dark"] .fetch-terminal {
   iframe {
     display: block;
     width: 100%;
-    height: min(70vh, 600px);
+    // A little shorter than .fetch-terminal__pane's own max-height, so the
+    // iframe (which scrolls its own PDF internally) mostly fits in one
+    // screen instead of forcing the pane to scroll just to reveal it.
+    height: min(50vh, 420px);
     border: 1px solid var(--term-border);
     border-radius: 6px;
   }

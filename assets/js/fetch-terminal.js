@@ -96,11 +96,24 @@
       setActive(0);
     }
 
+    // The pane scrolls internally once its content is taller than its capped
+    // max-height (see _terminal.scss). Appending a line should reveal that new
+    // line (scroll to bottom, like a real terminal); swapping to a fresh
+    // window's content should start the reader at the top.
+    function scrollPaneTop() {
+      pane.scrollTop = 0;
+    }
+
+    function scrollPaneBottom() {
+      pane.scrollTop = pane.scrollHeight;
+    }
+
     function printLine(html) {
       var p = document.createElement("p");
       p.setAttribute("data-dynamic", "true");
       p.innerHTML = html;
       pane.appendChild(p);
+      scrollPaneBottom();
     }
 
     // Same as printLine, but appends each line with a staggered fade-in so a
@@ -115,6 +128,7 @@
         p.innerHTML = html;
         pane.appendChild(p);
       });
+      scrollPaneBottom();
     }
 
     function renderLines(lines) {
@@ -126,6 +140,7 @@
         p.innerHTML = html;
         pane.appendChild(p);
       });
+      scrollPaneTop();
     }
 
     function renderMessage(html) {
@@ -133,6 +148,7 @@
       // sequence's slow, position-based CSS delays (it would otherwise land on
       // p:nth-child(1) and sit invisible for ~2s before its fade-in even starts).
       pane.innerHTML = '<p class="fetch-terminal__printed-line" data-dynamic="true">' + html + "</p>";
+      scrollPaneTop();
     }
 
     function buildNewsLines() {
@@ -172,6 +188,7 @@
         clone.style.animationDelay = i * 90 + "ms";
         target.appendChild(clone);
       });
+      scrollPaneTop();
     }
 
     // Plain-text summary (title/authors/venue, no images) — what typing
@@ -221,6 +238,7 @@
         '<p class="fetch-terminal__printed-line fetch-terminal__printed-more" style="animation-delay:120ms">' +
         'open full view &rarr; <a href="' + entry.url + '" target="_blank" rel="noopener">' + entry.url + "</a>" +
         "</p>";
+      scrollPaneTop();
     }
 
     // ctrl+b c's blank "new" window: a fastfetch-style boot banner (figlet
@@ -237,6 +255,7 @@
         p.classList.add("fetch-terminal__printed-line");
         p.style.animationDelay = i * 90 + "ms";
       });
+      scrollPaneTop();
     }
 
     function fetchRepositories(entry, done) {
@@ -304,6 +323,7 @@
       if (entry.fetchUrl) {
         fetchRepositories(entry, function (html) {
           pane.innerHTML = html;
+          scrollPaneTop();
         });
       }
     }

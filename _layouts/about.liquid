@@ -11,6 +11,9 @@ layout: default
         {{ site.title }}
       {% endif %}
     </h1>
+    {% if page.social %}
+      <div class="contact-icons contact-icons--header">{% include social.liquid %}</div>
+    {% endif %}
     <p class="desc">{{ page.subtitle }}</p>
   </header>
 
@@ -77,11 +80,9 @@ layout: default
       </div>
     {% endif %}
     
-    <!-- Social -->
-    {% if page.social %}
+    <!-- Social icons now live in the header, next to the name -->
+    {% if page.social and site.contact_note %}
       <div class="social">
-        <div class="contact-icons">{% include social.liquid %}</div>
-
         <div class="contact-note">{{ site.contact_note }}</div>
       </div>
     {% endif %}

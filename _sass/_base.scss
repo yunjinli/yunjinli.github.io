@@ -403,6 +403,30 @@ ul.task-list input[type="checkbox"] {
   }
 }
 
+// Social icons shown next to the name in the header (about page), instead of
+// the much larger, centered .social row at the bottom of other layouts.
+.contact-icons--header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.5rem 0 0.9rem;
+  font-size: 2rem;
+
+  a {
+    i::before {
+      color: var(--global-text-color);
+      transition-property: all 0.2s ease-in-out;
+    }
+
+    &:hover {
+      i::before {
+        color: var(--global-theme-color);
+      }
+    }
+  }
+}
+
 .wechat-modal {
   display: none;
   position: fixed;
