@@ -92,6 +92,7 @@ research_gate_profile: # your profile on ResearchGate
 scopus_id: # your profile on Scopus
 blogger_url: # your blogger URL
 work_url: # work page URL
+tum_vcard_url: https://campus.tum.de/tumonline/visitenkarte.show_vcard?pPersonenId=D96E59393E1D002A&pPersonenGruppe=3 # TUM Online business card URL
 keybase_username: # your keybase user name
 wikidata_id: # your wikidata id
 wikipedia_id: # your wikipedia id (Case sensitive)

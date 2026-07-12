@@ -62,6 +62,9 @@
     {% include scripts/vega.liquid %}
     {% include scripts/tikzjax.liquid %}
     {% include scripts/misc.liquid %}
+    {% if page.fetch_terminal %}
+      <script defer src="{{ '/assets/js/fetch-terminal.js' | relative_url | bust_file_cache }}"></script>
+    {% endif %}
     {% include scripts/badges.liquid %}
     {% include scripts/mathjax.liquid %}
     {% include scripts/analytics.liquid %}

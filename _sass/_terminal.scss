@@ -1,0 +1,327 @@
+// News/Publications/Projects are now surfaced through the terminal's
+// /news, /publications, /projects commands instead of duplicated below it.
+// Kept in the DOM (not removed from the page) so fetch-terminal.js can still
+// read their content — just visually hidden here.
+#about-news,
+#about-publications,
+#about-projects {
+  display: none;
+}
+
+// Fastfetch-style terminal widget used on the about page
+.fetch-terminal {
+  // Light theme (default) palette
+  --term-bg: #f4f4f7;
+  --term-bar: #e6e6ec;
+  --term-text: #292b3a;
+  --term-key: #2854a6;
+  --term-accent: #1c7a3e;
+  --term-prompt: #b8330f;
+  --term-muted: #6b6f83;
+  --term-border: #d4d5e0;
+
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--term-bg);
+  color: var(--term-text);
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+html[data-theme="dark"] .fetch-terminal {
+  // Dark theme palette (tokyo-night-ish)
+  --term-bg: #1a1b26;
+  --term-bar: #16161e;
+  --term-text: #c0caf5;
+  --term-key: #7aa2f7;
+  --term-accent: #9ece6a;
+  --term-prompt: #f7768e;
+  --term-muted: #565f89;
+  --term-border: #292e42;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.fetch-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--term-bar);
+  transition: background-color 0.3s ease;
+}
+
+.fetch-terminal__bar .dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+
+  &.dot--red { background: #f7768e; }
+  &.dot--yellow { background: #e0af68; }
+  &.dot--green { background: #9ece6a; }
+}
+
+.fetch-terminal__title {
+  margin-left: 0.75rem;
+  color: var(--term-muted);
+  font-size: 0.8rem;
+}
+
+.fetch-terminal__body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.fetch-terminal__photo img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid var(--term-border);
+}
+
+.fetch-terminal__info {
+  min-width: 240px;
+
+  p {
+    margin: 0 0 0.25rem;
+    line-height: 1.5;
+  }
+
+  .k {
+    color: var(--term-key);
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--term-accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.fetch-terminal__rule {
+  color: var(--term-muted);
+}
+
+.fetch-terminal__logos {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.6rem;
+
+  img {
+    display: block;
+    width: auto;
+  }
+}
+
+.fetch-terminal__cmd {
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--term-border);
+  line-height: 1.6;
+  transition: border-color 0.3s ease;
+
+  p {
+    margin: 0 0 0.9rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: var(--term-accent);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.fetch-terminal__prompt-sym {
+  margin-right: 0.4rem;
+  color: var(--term-prompt);
+  white-space: nowrap;
+}
+
+.fetch-terminal__promptline {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.fetch-terminal__printed {
+  margin: 0 0 0.9rem;
+  padding-left: 0.1rem;
+  border-left: 2px solid var(--term-border);
+}
+
+.fetch-terminal__printed-line {
+  margin: 0 0 0.6rem 0.7rem;
+  opacity: 0;
+  animation: fetch-line-in 0.2s ease-out forwards;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  a {
+    color: var(--term-accent);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.fetch-terminal__printed-more {
+  color: var(--term-muted);
+
+  a {
+    color: var(--term-muted);
+    text-decoration: underline;
+  }
+}
+
+.fetch-terminal__bullet {
+  color: var(--term-prompt);
+}
+
+.fetch-terminal__meta {
+  color: var(--term-muted);
+  font-size: 0.85em;
+}
+
+.fetch-terminal__input-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 80px;
+}
+
+.fetch-terminal__ghost {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: pre;
+  color: var(--term-muted);
+  opacity: 0.7;
+  pointer-events: none;
+  user-select: none;
+}
+
+.fetch-terminal__input {
+  position: relative;
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--term-text);
+  caret-color: var(--term-prompt);
+
+  &::placeholder {
+    color: var(--term-muted);
+    opacity: 0.8;
+  }
+}
+
+.fetch-terminal__suggestions {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0.35rem;
+  border: 1px solid var(--term-border);
+  border-radius: 6px;
+  background: var(--term-bar);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.fetch-terminal__suggestion {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &.is-active {
+    background: var(--term-border);
+  }
+}
+
+.fetch-terminal__suggestion-cmd {
+  color: var(--term-key);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.fetch-terminal__suggestion-desc {
+  color: var(--term-muted);
+  text-align: right;
+}
+
+// Stream the terminal output in line-by-line, like it's being printed live.
+@keyframes fetch-line-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fetch-terminal__info > *,
+.fetch-terminal__cmd > p:not([data-dynamic]) {
+  opacity: 0;
+  animation: fetch-line-in 0.25s ease-out forwards;
+}
+
+.fetch-terminal__info {
+  @for $i from 1 through 11 {
+    > *:nth-child(#{$i}) {
+      animation-delay: #{150 + ($i - 1) * 130}ms;
+    }
+  }
+}
+
+.fetch-terminal__cmd {
+  @for $i from 1 through 4 {
+    > p:not([data-dynamic]):nth-child(#{$i}) {
+      animation-delay: #{1930 + ($i - 1) * 550}ms;
+    }
+  }
+}
+
+// The interactive prompt line streams in right after the static output above.
+// Lines added later at runtime (data-dynamic) render immediately, with no delay.
+.fetch-terminal__promptline {
+  opacity: 0;
+  animation: fetch-line-in 0.25s ease-out forwards;
+  animation-delay: 4130ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fetch-terminal__info > *,
+  .fetch-terminal__cmd > p:not([data-dynamic]),
+  .fetch-terminal__promptline {
+    animation: none;
+    opacity: 1;
+  }
+}
