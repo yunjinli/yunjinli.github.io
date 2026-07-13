@@ -194,13 +194,21 @@ let transTheme = () => {
 };
 
 // Determine the expected state of the theme toggle, which can be "dark", "light", or
-// "system". Default is "dark" for first-time visitors (no stored preference yet).
+// "system". If nothing has been explicitly chosen yet, falls back to a
+// time-of-day default (see determineTimeOfDayDefault) instead.
 let determineThemeSetting = () => {
   let themeSetting = localStorage.getItem("theme");
   if (themeSetting != "dark" && themeSetting != "light" && themeSetting != "system") {
-    themeSetting = "dark";
+    themeSetting = determineTimeOfDayDefault();
   }
   return themeSetting;
+};
+
+// Default for visitors with no stored preference: dark in the evening/night,
+// light during the day, based on the visitor's own local clock.
+let determineTimeOfDayDefault = () => {
+  let hour = new Date().getHours();
+  return hour >= 19 || hour < 7 ? "dark" : "light";
 };
 
 // Determine the computed theme, which can be "dark" or "light". If the theme setting is
@@ -220,9 +228,18 @@ let determineComputedTheme = () => {
 };
 
 let initTheme = () => {
-  let themeSetting = determineThemeSetting();
+  let stored = localStorage.getItem("theme");
 
-  setThemeSetting(themeSetting);
+  if (stored == "dark" || stored == "light" || stored == "system") {
+    // Reader has explicitly picked a theme before — respect it.
+    setThemeSetting(stored);
+  } else {
+    // No stored preference: apply the time-of-day default without writing
+    // it to localStorage, so it keeps following the clock on future visits
+    // until the reader picks something via the toggle.
+    document.documentElement.setAttribute("data-theme-setting", determineThemeSetting());
+    applyTheme();
+  }
 
   // Add event listener to the theme toggle button.
   document.addEventListener("DOMContentLoaded", function () {
