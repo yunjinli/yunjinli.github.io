@@ -512,17 +512,6 @@
         return;
       }
 
-      // Setting these attributes/localStorage directly (rather than reloading
-      // the page) is enough: every color on this page is already driven by the
-      // html[data-theme] CSS variables, so the switch applies instantly.
-      if (exact && exact.themeMode) {
-        localStorage.setItem("theme", exact.themeMode);
-        document.documentElement.setAttribute("data-theme-setting", exact.themeMode);
-        document.documentElement.setAttribute("data-theme", exact.themeMode);
-        printLine("switched to " + exact.themeMode + " mode.");
-        return;
-      }
-
       if (exact && exact.infoText) {
         printLine(exact.infoText);
         return;

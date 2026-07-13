@@ -99,8 +99,6 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
         { "cmd": "/apply-gr", "mailTo": "{{ site.email }}", "mailSubject": "[Guided Research Application]", "desc": "email me about guided research" },
         { "cmd": "/apply-thesis", "mailTo": "{{ site.email }}", "mailSubject": "[Master Thesis Application]", "desc": "email me about a thesis" },
         { "cmd": "/apply-fp", "mailTo": "{{ site.email }}", "mailSubject": "[Research Internship Application]", "desc": "email me about a research internship" },
-        { "cmd": "/dark", "themeMode": "dark", "desc": "switch the page to dark mode" },
-        { "cmd": "/bright", "themeMode": "light", "desc": "switch the page to light mode" },
         { "cmd": "/info", "infoText": {{ fetch_terminal_info_text | strip_newlines | jsonify }}, "desc": "site info & copyright" },
         { "cmd": "/help", "desc": "list available commands" },
         { "cmd": "/clear", "desc": "clear extra output in this window" }

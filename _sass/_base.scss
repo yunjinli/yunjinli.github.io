@@ -425,6 +425,21 @@ ul.task-list input[type="checkbox"] {
       }
     }
   }
+
+  // #light-toggle's inner icons carry padding tuned for the navbar's own
+  // height (see _themes.scss); reset it here so the button sits inline with
+  // the rest of the row instead of sagging below it.
+  #light-toggle {
+    line-height: 1;
+
+    i {
+      padding: 0 !important;
+    }
+
+    &:hover i::before {
+      color: var(--global-theme-color);
+    }
+  }
 }
 
 .wechat-modal {
