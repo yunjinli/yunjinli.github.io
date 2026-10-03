@@ -174,6 +174,8 @@ Before deployment, CI runs the citation tests, builds with `JEKYLL_ENV=productio
 purges CSS, and checks local links and image sources in the generated HTML.
 The follow-up site link workflow downloads this exact build artifact rather
 than rebuilding a potentially different revision. Deployment runs are serialized.
+The link checker download is pinned, checksum-verified, and retried on transient
+network failures by `bin/install-lychee.sh`.
 CSS used by scroll animations and other dynamic states is retained during purging.
 The stylesheet cache key includes `_sass` and `assets/css/main.scss`, so returning
 visitors receive style changes. `bundle exec ruby tests/cache_bust_test.rb` checks it.

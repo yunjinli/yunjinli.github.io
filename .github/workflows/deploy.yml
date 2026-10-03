@@ -50,12 +50,10 @@ jobs:
           pip3 install nbconvert==7.17.1
           bundle exec jekyll build --lsi
           npm run css:purge
+      - name: Install pinned link checker
+        run: bash bin/install-lychee.sh
       - name: Check generated links and assets before deployment
-        uses: lycheeverse/lychee-action@v2.9.0
-        with:
-          lycheeVersion: v0.24.2
-          args: --offline --root-dir "${{ github.workspace }}/_site" --no-progress '_site/**/*.html'
-          fail: true
+        run: lychee --offline --root-dir "$GITHUB_WORKSPACE/_site" --no-progress '_site/**/*.html'
       - name: Save the checked production build
         uses: actions/upload-artifact@v4
         with:
