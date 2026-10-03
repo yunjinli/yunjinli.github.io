@@ -1,109 +1,121 @@
 ---
 layout: default
 ---
-<div class="post">
-  <header class="post-header">
-    <h1 class="post-title">
-      {% if site.title == 'blank' %}
-        <span class="font-weight-bold">{{ site.first_name }}</span> {{ site.middle_name }}
-        {{ site.last_name }}
-      {% else %}
-        {{ site.title }}
-      {% endif %}
-    </h1>
-    {% if page.social %}
-      <div class="contact-icons contact-icons--header">
-        {% include social.liquid %}
-        {% if site.enable_darkmode %}
-          <button id="light-toggle" title="Change theme">
-            <i class="ti ti-sun-moon" id="light-toggle-system"></i>
-            <i class="ti ti-moon-filled" id="light-toggle-dark"></i>
-            <i class="ti ti-sun-filled" id="light-toggle-light"></i>
-          </button>
-        {% endif %}
+<article class="portfolio">
+  <section class="portfolio-hero" id="about" aria-labelledby="about-heading">
+    <div class="portfolio-bio">
+      <p class="portfolio-eyebrow">Robotics &amp; embodied intelligence</p>
+      <h1 id="about-heading">Jim <span>Yun-Jin</span> Li</h1>
+      <div class="portfolio-intro">{{ content }}</div>
+      <div class="portfolio-social" aria-label="Contact and profiles">
+        <a href="mailto:{{ site.email }}"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Email</a>
+        {% if site.scholar_userid -%}
+          <a href="https://scholar.google.com/citations?user={{ site.scholar_userid }}">Scholar <span aria-hidden="true">↗</span></a>
+        {%- endif %}
+        {% if site.github_username -%}
+          <a href="https://github.com/{{ site.github_username }}">GitHub <span aria-hidden="true">↗</span></a>
+        {%- endif %}
+        {% if site.linkedin_username -%}
+          <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}">LinkedIn <span aria-hidden="true">↗</span></a>
+        {%- endif %}
       </div>
-    {% endif %}
-    <p class="desc">{{ page.subtitle }}</p>
-  </header>
+    </div>
+    <figure class="portfolio-portrait">
+      <div class="portfolio-portrait-frame">
+        <img
+          src="{{ page.profile.image | prepend: '/assets/img/' | relative_url }}"
+          alt="Portrait of Jim Li"
+          width="400"
+          height="400"
+          fetchpriority="high"
+        >
+      </div>
+      <figcaption>PhD student · TUM</figcaption>
+    </figure>
+  </section>
 
-  <article>
-    {% if page.profile %}
-      <div class="profile float-{% if page.profile.align == 'left' %}left{% else %}right{% endif %}">
-        {% if page.profile.image %}
-          {% assign profile_image_path = page.profile.image | prepend: 'assets/img/' %}
-          {% if page.profile.image_circular %}
-            {% assign profile_image_class = 'img-fluid z-depth-1 rounded-circle' %}
-          {% else %}
-            {% assign profile_image_class = 'img-fluid z-depth-1
-      rounded' %}
-          {% endif %}
-          {% capture sizes %}(min-width: {{site.max_width}}) {{ site.max_width | minus: 30 | times: 0.3}}px, (min-width: 576px)
-      30vw, 95vw"{% endcapture %}
-          {%
-            include figure.liquid loading="eager" path=profile_image_path class=profile_image_class sizes=sizes alt=page.profile.image
-            cache_bust=true
-          %}
-        {% endif %}
-        {% if page.profile.more_info %}
-          <div class="more-info">{{ page.profile.more_info }}</div>
-        {% endif %}
-      </div>
-    {% endif %}
+  <div class="portfolio-affiliations" aria-label="Affiliations">
+    <a href="https://nthu-en.site.nthu.edu.tw/"
+      ><img src="{{ '/assets/img/nthu_logo.png' | relative_url }}" alt="National Tsing Hua University" height="29"
+    ></a>
+    <a href="https://www.tum.de/en/"><img src="{{ '/assets/img/tum_logo.png' | relative_url }}" alt="Technical University of Munich" height="29"></a>
+    <a href="https://www.ce.cit.tum.de/lsy/home/"
+      ><img src="{{ '/assets/img/learnsyslab_logo.PNG' | relative_url }}" alt="Learning Systems and Robotics Lab" height="29"
+    ></a>
+    <a href="https://mcml.ai/"
+      ><img class="portfolio-logo-wide" src="{{ '/assets/img/MCML_Logo_os.png' | relative_url }}" alt="Munich Center for Machine Learning" height="17"
+    ></a>
+  </div>
 
-    <div class="clearfix">{{ content }}</div>
+  {% if page.news and site.announcements.enabled %}
+    <section
+      class="portfolio-section portfolio-news"
+      id="about-news"
+      aria-labelledby="news-heading"
+      data-reveal
+      data-expandable="news"
+      data-preview-limit="{{ site.announcements.limit }}"
+    >
+      <div class="portfolio-section-heading">
+        <h2 id="news-heading">Latest news</h2>
+        <button class="portfolio-more portfolio-expand" type="button" aria-expanded="false" aria-controls="all-news" data-label="All news" hidden>
+          All news <span aria-hidden="true">↓</span>
+        </button>
+      </div>
+      <div id="all-news" class="portfolio-list">{% include news.liquid %}</div>
+    </section>
+  {% endif %}
 
-    <!-- News -->
-    {% if page.news and site.announcements.enabled %}
-      <div id="about-news">
-        <h2>
-          <a href="{{ '/news/' | relative_url }}" style="color: inherit">News</a>
-        </h2>
-        {% include news.liquid limit=true %}
+  {% if page.selected_papers %}
+    <section class="portfolio-section portfolio-research" id="about-publications" aria-labelledby="research-heading" data-expandable="publications">
+      <div class="portfolio-section-heading" data-reveal>
+        <h2 id="research-heading">Selected research</h2>
+        <button
+          class="portfolio-more portfolio-expand"
+          type="button"
+          aria-expanded="false"
+          aria-controls="all-publications"
+          data-label="All publications"
+          hidden
+        >
+          All publications <span aria-hidden="true">↓</span>
+        </button>
       </div>
-      <!-- Unfiltered copy for the terminal's 1:news window (typed /news uses
-           the shorter, limited one above instead) -->
-      <div id="about-news-full">
-        {% include news.liquid %}
-      </div>
-    {% endif %}
+      <div id="all-publications" class="publications portfolio-list">{% bibliography --group_by none %}</div>
+    </section>
+  {% endif %}
 
-    <!-- Latest posts -->
-    {% if site.latest_posts.enabled %}
-      <h2>
-        <a href="{{ '/blog/' | relative_url }}" style="color: inherit">latest posts</a>
-      </h2>
-      {% include latest_posts.liquid %}
-    {% endif %}
+  {% if page.projects %}
+    <section class="portfolio-section" id="about-projects" aria-labelledby="projects-heading" data-expandable="projects">
+      <div class="portfolio-section-heading" data-reveal>
+        <h2 id="projects-heading">Selected projects</h2>
+        <button
+          class="portfolio-more portfolio-expand"
+          type="button"
+          aria-expanded="false"
+          aria-controls="all-projects"
+          data-label="All projects"
+          hidden
+        >
+          All projects <span aria-hidden="true">↓</span>
+        </button>
+      </div>
+      <div id="all-projects" class="portfolio-list">{% include portfolio-projects.liquid %}</div>
+    </section>
+  {% endif %}
 
-    <!-- Selected papers -->
-    {% if page.selected_papers %}
-      <div id="about-publications">
-        <h2>
-          <a href="{{ '/publications/' | relative_url }}" style="color: inherit">Publications</a>
-        </h2>
-        {% include selected_papers.liquid %}
-      </div>
-    {% endif %}
-
-    {% if page.projects %}
-      <div id="about-projects">
-        <h2>
-          <a href="{{ '/projects/' | relative_url }}" style="color: inherit">Projects</a>
-        </h2>
-        {% include projects_list.liquid %}
-      </div>
-      <!-- Unfiltered copy for the terminal's 3:projects window (typed /projects
-           uses the selected-only one above instead) -->
-      <div id="about-projects-full">
-        {% include projects_list_full.liquid %}
-      </div>
-    {% endif %}
-    
-    <!-- Social icons now live in the header, next to the name -->
-    {% if page.social and site.contact_note %}
-      <div class="social">
-        <div class="contact-note">{{ site.contact_note }}</div>
-      </div>
-    {% endif %}
-  </article>
-</div>
+  <section class="portfolio-contact" id="contact" aria-labelledby="contact-heading" data-reveal>
+    <div>
+      <p class="portfolio-eyebrow">Students &amp; collaborators</p>
+      <h2 id="contact-heading">Let's work together.</h2>
+      <p>
+        I'm open to thesis, guided research, and internship students, as well as research collaborations. If you'd like to work with me, email your
+        interests, CV, and up-to-date transcripts.
+      </p>
+    </div>
+    <div class="portfolio-contact-links">
+      <a class="portfolio-contact-button" href="mailto:{{ site.email }}">Get in touch <span aria-hidden="true">↗</span></a>
+      <a href="https://www.ce.cit.tum.de/lsy/join-us/open-research-projects/">Open research topics <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</article>

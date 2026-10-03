@@ -1,6 +1,11 @@
 ---
 ---
-<div class="row">
+<div
+  class="row"
+  {% if page.portfolio %}
+    data-publication-selected="{{ entry.selected | default: false }}"
+  {% endif %}
+>
   {% if site.enable_publication_thumbnails %}
     <div class="col-sm-2 {% if entry.preview %}preview{% else %}abbr{% endif %}">
       {% if entry.preview %}
@@ -41,7 +46,13 @@
   <!-- Entry bib key -->
   <div id="{{entry.key}}" class="{% if site.enable_publication_thumbnails %}col-sm-8{% else %}col-sm-10{% endif %}">
     <!-- Title -->
-    <div class="title">{{ entry.title }}</div>
+    <div class="title">
+      {% if page.portfolio and entry.html -%}
+        <a href="{{ entry.html }}">{{ entry.title }}</a>
+      {%- else -%}
+        {{- entry.title -}}
+      {%- endif %}
+    </div>
     <!-- Author -->
     <div class="author">
       {% assign author_array_size = entry.author_array | size %}
@@ -169,11 +180,11 @@
       {% endif %}
       {% if entry.html %}
         {% if entry.html contains '://' %}
-          <a href="{{ entry.html }}" class="btn btn-sm z-depth-0" role="button">
-            <i class="fas fa-globe"></i> Project
-          </a>
+          <a href="{{ entry.html }}" class="btn btn-sm z-depth-0" role="button"> <i class="fas fa-globe"></i> Project </a>
         {% else %}
-          <a href="{{ entry.html | prepend: '/assets/html/' | relative_url }}" class="btn btn-sm z-depth-0" role="button"><i class="fas fa-globe"></i></a>
+          <a href="{{ entry.html | prepend: '/assets/html/' | relative_url }}" class="btn btn-sm z-depth-0" role="button"
+            ><i class="fas fa-globe"></i
+          ></a>
         {% endif %}
       {% endif %}
       {% if entry.pdf %}
@@ -216,17 +227,22 @@
       {% if entry.website %}
         <a href="{{ entry.website }}" class="btn btn-sm z-depth-0" role="button">Website</a>
       {% endif %}
+      {% include publication-citations.liquid %}
       {% if entry.github %}
-          <a href="https://github.com/{{ entry.github }}" aria-label="{{ entry.github }} github stars">
-            <img src="https://img.shields.io/github/stars/{{ entry.github }}?style=social&label=Stars" alt="{{ entry.github }} GitHub stars">
-          </a>
-        {% endif %}
+        <a
+          href="https://github.com/{{ entry.github }}"
+          class="publication-stars btn btn-sm z-depth-0"
+          data-github-repo="{{ entry.github | escape }}"
+          aria-label="{{ entry.github | escape }} on GitHub"
+        >
+          <i class="fa-brands fa-github" aria-hidden="true"></i> <span data-star-label>GitHub</span>
+        </a>
+      {% endif %}
     </div>
     {% if site.enable_publication_badges %}
       {% assign entry_has_altmetric_badge = entry.altmetric or entry.doi or  entry.eprint or entry.pmid or entry.isbn %}
       {% assign entry_has_dimensions_badge = entry.dimensions or entry.doi or entry.pmid %}
-      {% assign entry_has_google_scholar_badge = entry.google_scholar_id %}
-      {% if entry_has_altmetric_badge or entry_has_dimensions_badge or entry_has_google_scholar_badge %}
+      {% if entry_has_altmetric_badge or entry_has_dimensions_badge %}
         <div class="badges">
           {% if site.enable_publication_badges.altmetric and entry_has_altmetric_badge %}
             <span
@@ -263,18 +279,6 @@
               data-legend="hover-right"
               style="margin-bottom: 3px;"
             ></span>
-          {% endif %}
-          {% if site.enable_publication_badges.google_scholar and entry_has_google_scholar_badge %}
-            <a
-              href="https://scholar.google.com/citations?view_op=view_citation&hl=en&user={{ site.scholar_userid }}&citation_for_view={{ site.scholar_userid }}:{{ entry.google_scholar_id }}"
-              aria-label="Google Scholar link"
-              role="button"
-            >
-              <img
-                src="https://img.shields.io/badge/scholar-{% google_scholar_citations site.scholar_userid entry.google_scholar_id %}-4285F4?logo=googlescholar&labelColor=beige"
-                alt="{% google_scholar_citations site.scholar_userid entry.google_scholar_id %} Google Scholar citations"
-              >
-            </a>
           {% endif %}
         </div>
       {% endif %}

@@ -16,14 +16,16 @@
   </head>
 
   <!-- Body -->
-  <body class="{% if site.navbar_fixed and page.permalink != '/' %}fixed-top-nav{% endif %} {% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}">
-    <!-- Header (hidden on the about page: the terminal there is the nav) -->
-    {% unless page.permalink == '/' %}
+  <body class="{% if page.portfolio %}portfolio-page{% else %}{% if site.navbar_fixed %}fixed-top-nav{% endif %} {% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}{% endif %}">
+    <!-- Header -->
+    {% if page.portfolio %}
+      {% include portfolio-header.liquid %}
+    {% else %}
       {% include header.liquid %}
-    {% endunless %}
+    {% endif %}
 
     <!-- Content -->
-    <div class="container mt-5" role="main">
+    <div class="{% if page.portfolio %}portfolio-main{% else %}container mt-5{% endif %}" id="main-content" role="main" tabindex="-1">
       {% if page.toc and page.toc.sidebar %}
         {% if page.toc.sidebar == 'right' %}
           <div class="row">
@@ -49,10 +51,12 @@
       {% endif %}
     </div>
 
-    <!-- Footer (hidden on the about page: see it there via the terminal's /info command) -->
-    {% unless page.permalink == '/' %}
+    <!-- Footer -->
+    {% if page.portfolio %}
+      {% include portfolio-footer.liquid %}
+    {% else %}
       {% include footer.liquid %}
-    {% endunless %}
+    {% endif %}
 
     <!-- JavaScripts -->
     {% include scripts/jquery.liquid %}
@@ -66,8 +70,8 @@
     {% include scripts/vega.liquid %}
     {% include scripts/tikzjax.liquid %}
     {% include scripts/misc.liquid %}
-    {% if page.fetch_terminal %}
-      <script defer src="{{ '/assets/js/fetch-terminal.js' | relative_url | bust_file_cache }}"></script>
+    {% if page.portfolio %}
+      <script defer src="{{ '/assets/js/portfolio.js' | relative_url | bust_file_cache }}"></script>
     {% endif %}
     {% include scripts/badges.liquid %}
     {% include scripts/mathjax.liquid %}

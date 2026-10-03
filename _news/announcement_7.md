@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-I joined [Learning Systems and Robotics Lab (LSY)](https://www.dynsyslab.org/) as a PhD student supervised by Prof. Dr. Angela Schoellig.
+I joined [Learning Systems and Robotics Lab (LSY)](https://www.ce.cit.tum.de/lsy/home/) as a PhD student supervised by Prof. Dr. Angela Schoellig.

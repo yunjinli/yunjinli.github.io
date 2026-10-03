@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Successfully finished my Master's thesis defense titled: "4DGSAM: Segment Anything in Dynamic Scene Novel View Synthesis". 
+Successfully finished my Master's thesis defense titled: "4DGSAM: Segment Anything in Dynamic Scene Novel View Synthesis".

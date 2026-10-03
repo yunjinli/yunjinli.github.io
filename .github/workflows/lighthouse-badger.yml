@@ -14,7 +14,7 @@ name: "Lighthouse Badger"
 
 # INPUTS as environmental variables (env) for not manually triggered workflows
 env:
-  URLS: https://alshedivat.github.io/al-folio/
+  URLS: https://yunjinli.github.io/
   TOKEN_NAME: LIGHTHOUSE_BADGER_TOKEN
   # If any of the following env is blank, a default value is used instead
   REPO_BRANCH: "${{ github.repository }} master" # target repository & branch e.g. 'dummy/mytargetrepo main'
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: ${{ env.REPOSITORY }}
-          token: ${{ secrets[github.event.inputs.token_name] || secrets[env.TOKEN_NAME] }}
+          token: ${{ secrets[env.TOKEN_NAME] }}
           ref: ${{ env.BRANCH }}
       - uses: actions/checkout@v4
         with:

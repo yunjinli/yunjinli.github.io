@@ -1,7 +1,6 @@
 ---
-layout: page
+layout: portfolio-redirect
+portfolio_section: news
 title: news
 permalink: /news/
 ---
-
-{% include news.liquid %}

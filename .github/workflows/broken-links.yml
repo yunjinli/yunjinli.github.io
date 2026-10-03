@@ -2,51 +2,28 @@ name: Check for broken links
 
 on:
   push:
-    branches:
-      - master
-      - main
-    paths:
-      - "assets/**"
-      - "**.html"
-      - "**.js"
-      - "**.liquid"
-      - "**/*.md"
-      - "**.yml"
-      - "!.github/workflows/axe.yml"
-      - "!.github/workflows/deploy-docker-tag.yml"
-      - "!.github/workflows/deploy-image.yml"
-      - "!.github/workflows/docker-slim.yml"
-      - "!.github/workflows/lighthouse-badger.yml"
-      - "!.github/workflows/prettier.yml"
-      - "!lighthouse_results/**"
+    branches: [master, main]
   pull_request:
-    branches:
-      - master
-      - main
-    paths:
-      - "assets/**"
-      - "**.html"
-      - "**.js"
-      - "**.liquid"
-      - "**/*.md"
-      - "**.yml"
-      - "!.github/workflows/axe.yml"
-      - "!.github/workflows/deploy-docker-tag.yml"
-      - "!.github/workflows/deploy-image.yml"
-      - "!.github/workflows/docker-slim.yml"
-      - "!.github/workflows/lighthouse-badger.yml"
-      - "!.github/workflows/prettier.yml"
-      - "!lighthouse_results/**"
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   link-checker:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Link Checker 🔗
-        uses: lycheeverse/lychee-action@v1.9.0
+      - uses: actions/checkout@v5
+      - name: Check maintained source content
+        uses: lycheeverse/lychee-action@v2.9.0
         with:
+          lycheeVersion: v0.24.2
           fail: true
-          # removed md files that include liquid tags
-          args: --exclude-path README.md --exclude-path _pages/404.md --exclude-path _pages/blog.md --exclude-path _posts/2018-12-22-distill.md --verbose --no-progress './**/*.md' './**/*.html'
+          # Original theme documentation and the excluded Einstein sample are
+          # reference material. Liquid routes/assets are checked after rendering.
+          args: >-
+            --no-progress --max-retries 2 --timeout 20 --exclude-loopback
+            --exclude-path _pages/about_einstein.md --exclude-path _pages/404.md
+            README.md CLAUDE.md '_pages/*.md' '_news/*.md' '_projects/*.md'

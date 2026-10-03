@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% assign destination = '/' | relative_url | append: '#all-' | append: page.portfolio_section %}
+    <meta http-equiv="refresh" content="0; url={{ destination }}">
+    <link rel="canonical" href="{{ '/' | absolute_url }}">
+    <title>
+      {{ page.title | capitalize }}
+      ·
+      {{ site.first_name }}
+      {{ site.last_name }}
+    </title>
+  </head>
+  <body>
+    <p>
+      <a href="{{ destination }}">View all {{ page.portfolio_section }} on the homepage.</a>
+    </p>
+  </body>
+</html>

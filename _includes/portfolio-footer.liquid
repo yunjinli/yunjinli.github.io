@@ -1,0 +1,17 @@
+<footer class="portfolio-footer">
+  <div>
+    <span
+      >&copy; {{ site.time | date: '%Y' }}
+      {{ site.first_name }}
+      {{ site.last_name -}}
+    </span>
+    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+  </div>
+  <p>
+    Built with <a href="https://jekyllrb.com/">Jekyll</a> &amp; <a href="https://github.com/alshedivat/al-folio">al-folio</a>.
+    {% if site.impressum_path -%}
+      <a href="{{ site.impressum_path | relative_url }}">Impressum</a>.
+    {%- endif %}
+    {% if site.last_updated %}Updated {{ site.time | date: '%B %Y' }}.{% endif %}
+  </p>
+</footer>

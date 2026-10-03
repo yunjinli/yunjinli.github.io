@@ -198,8 +198,12 @@
         var bodyHtml = body ? body.innerHTML.trim() : "";
         return (
           '<span class="fetch-terminal__newsrow">' +
-          '<span class="fetch-terminal__meta fetch-terminal__newsdate">' + dateText + "</span>" +
-          '<span class="fetch-terminal__newsevent">' + bodyHtml + "</span>" +
+          '<span class="fetch-terminal__meta fetch-terminal__newsdate">' +
+          dateText +
+          "</span>" +
+          '<span class="fetch-terminal__newsevent">' +
+          bodyHtml +
+          "</span>" +
           "</span>"
         );
       });
@@ -265,10 +269,16 @@
       wrap.setAttribute("data-dynamic", "true");
       wrap.innerHTML =
         '<div class="fetch-terminal__printed-line fetch-terminal__iframe-wrap">' +
-        '<iframe src="' + entry.previewUrl + '" loading="lazy" allow="autoplay"></iframe>' +
+        '<iframe src="' +
+        entry.previewUrl +
+        '" loading="lazy" allow="autoplay"></iframe>' +
         "</div>" +
         '<p class="fetch-terminal__printed-line fetch-terminal__printed-more" style="animation-delay:120ms">' +
-        'open full view &rarr; <a href="' + entry.url + '" target="_blank" rel="noopener">' + entry.url + "</a>" +
+        'open full view &rarr; <a href="' +
+        entry.url +
+        '" target="_blank" rel="noopener">' +
+        entry.url +
+        "</a>" +
         "</p>";
       pane.appendChild(wrap);
       scrollPaneBottom();

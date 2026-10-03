@@ -1,6 +1,12 @@
 {
+  "scripts": {
+    "format:check": "prettier . --check",
+    "format": "prettier . --write",
+    "css:purge": "node bin/purge-css.cjs"
+  },
   "devDependencies": {
     "@shopify/prettier-plugin-liquid": "1.4.0",
-    "prettier": "3.1.1"
+    "prettier": "3.1.1",
+    "purgecss": "7.0.2"
   }
 }

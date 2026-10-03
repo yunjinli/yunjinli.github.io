@@ -40,8 +40,8 @@
       <div class="collapse navbar-collapse text-right" id="navbarNav">
         <ul class="navbar-nav ml-auto flex-nowrap">
           {% for page in site.pages %}
-            {% if page.permalink == '/' %} 
-              {% assign about_title = page.title %} 
+            {% if page.permalink == '/' %}
+              {% assign about_title = page.title %}
               {% assign about_icon = page.nav_icon %}
             {% endif %}
           {% endfor %}
@@ -109,9 +109,7 @@
             {% endif %}
           {% endfor %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ site.cv_url }}" target="_blank">
-              <i class="fa-solid fa-file-pdf"></i>&nbsp;CV
-            </a>
+            <a class="nav-link" href="{{ site.cv_url }}" target="_blank"> <i class="fa-solid fa-file-pdf"></i>&nbsp;CV </a>
           </li>
           {% if site.enable_darkmode %}
             <li class="toggle-container">

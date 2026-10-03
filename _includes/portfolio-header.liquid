@@ -1,0 +1,19 @@
+<a class="portfolio-skip" href="#main-content">Skip to content</a>
+<header class="portfolio-header">
+  <nav class="portfolio-nav" aria-label="Main navigation">
+    <a class="portfolio-brand" href="{{ '/' | relative_url }}">Jim Li</a>
+    <div class="portfolio-nav-links">
+      <a href="#about">About</a>
+      <a href="#about-publications">Research</a>
+      <a href="#about-projects">Projects</a>
+      <a href="{{ site.cv_url }}" target="_blank" rel="noopener noreferrer">CV <span aria-hidden="true">↗</span></a>
+      {% if site.enable_darkmode %}
+        <button id="light-toggle" type="button" title="Change color theme" aria-label="Change color theme">
+          <i class="ti ti-sun-moon" id="light-toggle-system" aria-hidden="true"></i>
+          <i class="ti ti-moon-filled" id="light-toggle-dark" aria-hidden="true"></i>
+          <i class="ti ti-sun-filled" id="light-toggle-light" aria-hidden="true"></i>
+        </button>
+      {% endif %}
+    </div>
+  </nav>
+</header>

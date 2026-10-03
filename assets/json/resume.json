@@ -42,7 +42,17 @@
       "studyType": "M. Sc in Robotics, Cognition, Intelligence",
       "startDate": "2021-10-01",
       "score": "10",
-      "courses": ["Machine Learning", "Introduction to Deep Learning", "Introduction to Artificial Intelligence", "Advanced Deep Learning for Robotics", "Robotics", "Robot Motion Planning", "Computer Vision for Multi‑View Geometry", "Vision‑Based Navigation (PR)", "The Evolution of Motion Estimation and Real‑time 3D Reconstruction (SE)"]
+      "courses": [
+        "Machine Learning",
+        "Introduction to Deep Learning",
+        "Introduction to Artificial Intelligence",
+        "Advanced Deep Learning for Robotics",
+        "Robotics",
+        "Robot Motion Planning",
+        "Computer Vision for Multi‑View Geometry",
+        "Vision‑Based Navigation (PR)",
+        "The Evolution of Motion Estimation and Real‑time 3D Reconstruction (SE)"
+      ]
     },
     {
       "institution": "National Tsing Hua University, Hsinchu, Taiwan",
@@ -55,7 +65,7 @@
       "score": "10"
     }
   ],
-  
+
   "publications": [
     {
       "name": "VXP: Voxel-Cross-Pixel Large-scale Image-LiDAR Place Recognition",
@@ -82,12 +92,7 @@
       "name": "Embedded System",
       "level": "",
       "icon": "fa-solid fa-hashtag",
-      "keywords": [
-        "Jetson Nano",
-        "STM32",
-        "Arduino",
-        "PSoC 6 (CMSIS-NN, CMSIS-DSP, TinyML, RTOS)"
-      ]
+      "keywords": ["Jetson Nano", "STM32", "Arduino", "PSoC 6 (CMSIS-NN, CMSIS-DSP, TinyML, RTOS)"]
     }
   ],
   "languages": [
@@ -116,12 +121,7 @@
     {
       "name": "Computer Vision",
       "icon": "fa-solid fa-tag",
-      "keywords": [
-        "Place Recognition",
-        "Visual SLAM",
-        "3D Reconstruction",
-        "Novel-View Synthesis"
-      ]
+      "keywords": ["Place Recognition", "Visual SLAM", "3D Reconstruction", "Novel-View Synthesis"]
     }
   ],
   "projects": [

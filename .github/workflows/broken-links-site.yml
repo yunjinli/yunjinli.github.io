@@ -5,42 +5,27 @@ on:
     workflows: [Deploy site]
     types: [completed]
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   check-links-on-site:
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    # available images: https://github.com/actions/runner-images#available-images
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      # Inspect the exact production output, without rebuilding another revision.
+      - name: Download the checked production build
+        uses: actions/download-artifact@v5
         with:
-          ruby-version: "3.2.2"
-          bundler-cache: true
-      - name: Update _config.yml ⚙️
-        uses: fjogeleit/yaml-update-action@main
+          name: production-site
+          path: _site
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Check generated links and assets
+        uses: lycheeverse/lychee-action@v2.9.0
         with:
-          commitChange: false
-          valueFile: "_config.yml"
-          changes: |
-            {
-              "giscus.repo": "${{ github.repository }}",
-              "baseurl": ""
-            }
-      - name: Install and Build 🔧
-        run: |
-          pip3 install --upgrade jupyter
-          export JEKYLL_ENV=production
-          bundle exec jekyll build --lsi
-      - name: Purge unused CSS 🧹
-        run: |
-          npm install -g purgecss
-          purgecss -c purgecss.config.js
-      - name: Link Checker 🔗
-        uses: lycheeverse/lychee-action@v1.9.0
-        with:
+          lycheeVersion: v0.24.2
+          args: --offline --root-dir "${{ github.workspace }}/_site" --no-progress '_site/**/*.html'
           fail: true
-          # only check local links
-          args: --offline --remap '_site(/?.*)/assets/(.*) _site/assets/$2' --verbose --no-progress '_site/**/*.html'

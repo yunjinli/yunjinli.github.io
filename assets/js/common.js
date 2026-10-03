@@ -1,7 +1,6 @@
 $(document).ready(function () {
   // add toggle functionality to abstract and bibtex buttons
-  // delegated on document so it still works for entries injected later
-  // (e.g. the about page's terminal pulling in the publications/projects list)
+  // Delegation also supports entries injected after the initial page load.
   $(document).on("click", "a.abstract", function () {
     $(this).parent().parent().find(".abstract.hidden").toggleClass("open");
     $(this).parent().parent().find(".bibtex.hidden.open").toggleClass("open");

@@ -1,38 +1,60 @@
 # yunjinli.github.io
 
-Personal academic site (Jekyll, al-folio theme). Original theme README moved to
-`README_Orig.md` — this file is the working reference for maintaining content
-and the custom terminal widget on the about page.
+Personal academic site (Jekyll, al-folio theme) with a custom portfolio homepage.
+The original theme README is in `README_Orig.md`.
+
+## Homepage
+
+- `_pages/about.md`: short biography and homepage front matter. Set
+  `profile.image` to a filename in `assets/img/` to change the portrait.
+- `_layouts/about.liquid`: biography on the left, portrait on the right,
+  affiliations, news, selected research, selected projects, and student contact.
+  The bio and portrait stack on narrow screens.
+- `_includes/portfolio-header.liquid`: standard section links, CV, and theme toggle.
+- `_includes/portfolio-projects.liquid`: project cards; selected entries show in
+  the initial view until the reader expands the list.
+- `_includes/portfolio-footer.liquid`: homepage credits and contact information.
+- `_sass/_portfolio.scss`: scoped homepage styles, breakpoints, and motion.
+- `assets/js/portfolio.js`: active navigation, inline list expansion, individual card entrances on scroll, and
+  video previews on hover. Native video controls remain available on touch
+  devices. Reduced-motion preferences disable automatic animation and previews.
+  Cards fade upward after entering the viewport, with a brief stagger within grid rows.
+  They replay after leaving the screen completely; newly expanded cards follow
+  the same behavior. Headings animate separately. Cards are prepared only after
+  scroll observers are installed; reduced motion, keyboard focus, and no-JS
+  viewing keep the content visible.
+
+Without JavaScript, complete lists remain visible. All news / All projects /
+All publications controls appear only when there are more entries to reveal.
+News uses `announcements.limit`; publications and projects use `selected`.
+The controls expand in place and change to Show less. Hashes `#all-news`,
+`#all-publications`, and `#all-projects` open the complete corresponding list.
+The old `/news/`, `/publications/`, and `/projects/` routes redirect to these
+homepage hashes through `_layouts/portfolio-redirect.liquid`.
+
+The homepage
+uses `portfolio: true` to select its navigation, footer, styles, and script.
+The former `_sass/_terminal.scss` and `assets/js/fetch-terminal.js` are retained
+as legacy sources but are no longer loaded.
 
 ## Adding a news item
 
-Create a new file in `_news/`, e.g. `_news/announcement_6.md`:
+Create a file in `_news/`, for example `_news/announcement_8.md`:
 
 ```yaml
 ---
 layout: post
-date: 2026-07-12 12:00:00-0000
+date: 2026-10-03 12:00:00-0000
 inline: true
 related_posts: false
 ---
-
-Short announcement text, emoji ok :tada:
+Short announcement text, emoji supported.
 ```
 
-- `inline: true` renders it as a one-liner in the news list (typical case).
-- Omit `inline` and add a `title:` for a full post instead.
-- Sorted by `date` automatically, newest first.
-
-**Where it shows up:**
-- About page's own News section and the terminal's `1:news` tab / `/latest_news`
-  preview both read from the same `_news/` collection — no other file needs editing.
-- `_config.yml`'s `announcements.limit` (currently `5`) caps the about page's
-  plain News section.
-- The terminal's `1:news` tab (ctrl+b 1) always shows **every** news item
-  (reads the unfiltered `#about-news-full` container in `_layouts/about.liquid`).
-- Typed `/latest_news` shows a short preview, capped by `"previewCount"` on the
-  `/latest_news` entry in the terminal's command list — see
-  [Terminal command list](#terminal-command-list-_pagesaboutmd) below.
+- `inline: true` shows the announcement body in the list. Otherwise add a
+  `title` for a separate post.
+- The homepage shows the newest items, limited by `_config.yml`'s
+  `announcements.limit`. All news expands the complete list in place.
 
 ## Adding a publication
 
@@ -42,7 +64,7 @@ Add a BibTeX entry to `_bibliography/papers.bib`:
 @article{lastname2026key,
   title={Paper Title},
   author={Last, First and Other, Author},
-  journal={Venue Name YYYY},
+  journal={Venue Name},
   year={2026},
   html={https://yunjinli.github.io/project-page/},
   arxiv={2601.xxxxx},
@@ -52,92 +74,115 @@ Add a BibTeX entry to `_bibliography/papers.bib`:
 }
 ```
 
-- `selected={true}` — **required** to appear on the about page / terminal.
-  There's only one publications list (no separate "show all" tab like news/projects) —
-  it's whatever's marked `selected`.
-- `html={URL}` — the canonical link used for the title and the globe-icon
-  "Project" button. The terminal always prefers this over `arxiv`/`github` when
-  making the title clickable, so set it to whatever you want readers to land on.
-- `preview={filename}` — image/gif, must already exist under
-  `assets/img/publication_preview/` (or pass a full `://` URL instead).
-- `arxiv`, `github` — optional extra link buttons.
-- Full list of recognized-but-hidden bibtex keys (won't leak into rendered
-  text): see `filtered_bibtex_keywords` in `_config.yml`.
-
-**Where it shows up:** about page's Publications section, terminal's
-`2:publications` tab, and typed `/publications` — all the same selected set,
-via `#about-publications` (built by `_includes/selected_papers.liquid`).
+- `selected={true}` includes the entry in the homepage's Selected research.
+  All publications expands the full bibliography in place. The control is
+  omitted when all publications are already selected and visible.
+- `html` supplies the Project link and the clickable title on the homepage.
+- `preview` is a filename in `assets/img/publication_preview/` or a full URL.
+- `arxiv` and `github` are optional extra links.
+- GitHub stars use the same button style as the other links. The browser reads
+  the public GitHub API and caches counts for an hour in session storage;
+  failures fall back to a plain GitHub link.
+- `filtered_bibtex_keywords` in `_config.yml` controls which custom keys are
+  hidden in rendered citations.
 
 ## Adding a project
 
-Create a new file in `_projects/`, e.g. `_projects/7_project.md`:
+Create a file in `_projects/`, for example `_projects/7_project.md`:
 
 ```yaml
 ---
 layout: page
 title: Project Title
-description: One-line description shown under the title
-img: assets/img/project-preview.gif   # or use `video: assets/video/x.mp4`
-redirect: https://project-page-or-notion-link.example    # or use `url:` for an in-site project page instead
-importance: 7       # lower number = higher up the list
+description: One-line description
+img: assets/img/project-preview.gif
+# Alternatively: video: assets/video/demo.mp4
+redirect: https://project-page.example
+importance: 7
 category: work
 github: yunjinli/repo-name
-selected: true       # required to appear as a "selected" project
+selected: true
 ---
-
-Full project page body (only matters if you don't set `redirect`).
 ```
 
-- `selected: true` — controls the **selected-only** views: the about page's
-  Projects section and typed `/projects` in the terminal.
-- `3:projects` tab (ctrl+b 3) is the one exception — it always shows **every**
-  project regardless of `selected`, via the unfiltered `#about-projects-full`
-  container (`_includes/projects_list_full.liquid`), mirroring the news split above.
-- `importance` sets sort order (ascending) in both the selected and full lists.
-- Use `redirect` for an external/Notion/paper page; use `url` (default, page's
-  own permalink) to let the project have its own page on this site.
+- `selected: true` includes the project in the homepage's initial view.
+- All projects expands the remaining projects in place.
+- Lower `importance` values sort first.
+- `redirect` links to an external project page; omit it to use the project's
+  generated page and Markdown body.
+- `github` accepts an owner/repository pair or a complete URL.
 
-## Terminal command list (`_pages/about.md`)
+## Google Scholar citation counts
 
-Near the top of `_pages/about.md` there's a `<script type="application/json"
-id="fetch-terminal-commands">` block — a JSON array of command objects read by
-`assets/js/fetch-terminal.js`. Relevant fields per entry:
+`_plugins/scholar-profile.rb` reads the configured public Scholar profile once
+per build, reusing successful responses for 24 hours. After failures, requests
+are throttled for an hour. Each paper is matched by title, including aliases
+for renamed papers such as SADG / TRASE. Cached values survive failed requests.
 
-| field | meaning |
-|---|---|
-| `cmd` | the typed command, e.g. `"/projects"` |
-| `window` | tmux window id it opens when clicked as a tab (or via `ctrl+b <key>`) |
-| `key` | number key for `ctrl+b <key>` |
-| `print` | which `#about-<print>`[`-full`] container the **window/tab** view renders |
-| `text` | if set, typing this command renders the same rich preview inline (appended, not replacing prior output) instead of switching tabs |
-| `previewCount` | (news only, so far) how many items the **typed** command shows before pointing to the full tab |
-| `desc` | shown in `/help` |
+`_data/scholar_citations.yml` holds verified fallback values keyed by BibTeX ID.
+For a new publication, add its Scholar title under `titles`. When supplying a
+verified snapshot, fill in `citations` (an integer), `article_id` (the part after
+the colon in Scholar's `citation_for_view` URL), and a quoted ISO 8601
+`checked_at` timestamp. Leave unknown counts blank, never zero. Newer verified
+snapshots take precedence over older cached responses.
 
-To add a brand-new typed command, add an entry here and a matching branch in
-`run()` in `assets/js/fetch-terminal.js`.
+The citation link renders as Cited by N when a count is known, with its date in
+the tooltip; otherwise it links to a Google Scholar search for that paper.
+These are build-time snapshots, not live browser requests. The existing
+`enable_publication_badges.google_scholar` setting enables this feature.
 
-## Other configurable parameters (`_config.yml`)
+Run the parser and cache checks with
+`bundle exec ruby tests/scholar_profile_test.rb`.
 
-- `announcements.limit` — how many news items show on the plain about page (blank = all).
-- `latest_posts.enabled` / `latest_posts.limit` — blog post preview on about page.
-- `cv_url` / `cv_preview_url` — Google Drive share link / embeddable `/preview`
-  link, used by the navbar and the terminal's `/cv`.
-- `tum_vcard_url` — TUM Online business card link.
-- `contact_note` — text shown below the about page (footer/social area).
-- `footer_text` — site-wide copyright text; also what the terminal's `/info`
-  command prints (via the `fetch_terminal_info_text` capture block near the
-  top of `_pages/about.md`).
-- `max_author_limit` — cap authors shown per publication before "click to expand".
-- `scholar.style` — citation style (apa, etc.) for rendered bibliography entries.
+## Other configuration
 
-## Verifying changes
+- `cv_url`: CV destination in navigation.
+- `github_username`, `scholar_userid`, `linkedin_username`, and `email`:
+  homepage profile and contact links.
+- `enable_darkmode`: theme switch; `assets/js/theme.js` retains the existing
+  time-of-day default and remembered visitor preference.
+- `max_author_limit` and `scholar.style`: bibliography rendering.
+- `footer_text`: footer on archive and article pages; homepage credits live in
+  `_includes/portfolio-footer.liquid`.
+- `last_updated` and `impressum_path`: optional footer information.
 
-`bundle exec jekyll build` (or `bundle exec jekyll serve -P 4321`) to check for
-build errors. For terminal JS/behavior changes, the established test method
-this session used headless Chrome via raw CDP (no puppeteer/playwright in this
-environment): launch `google-chrome --headless --disable-gpu
---remote-debugging-port=9222 --no-sandbox`, then drive it with a small Python
-script over the `websockets` + `requests` libraries (navigate, dispatch
-synthetic input/keydown events into `#fetch-terminal-input`, inspect the DOM via
-`Runtime.evaluate`). Clean up the Chrome process and any stray screenshots
-afterward.
+## Preview and verification
+
+```sh
+bundle exec jekyll serve --host 0.0.0.0 --port 4321 --livereload
+```
+
+Open `http://localhost:4321/`. For a build alone, run
+`bundle exec jekyll build`. Check JavaScript syntax with
+`node --check assets/js/portfolio.js`.
+
+For visual and interaction checks, use installed headless Chrome with raw CDP
+and Python's `websockets` and `requests` packages. Check desktop and mobile
+layouts, photo placement, section navigation, publication controls, dark mode,
+reduced motion, video previews, and content visibility without JavaScript.
+Keep preview screenshots outside the repository and stop temporary browser
+processes after checking.
+
+## Deployment
+
+The default branch is `master`; pushes build and publish to `gh-pages`.
+`Deploy site` installs ImageMagick explicitly and uses `Gemfile.lock` and
+`package-lock.json` for reproducible tools. Animated GIFs stay in their original
+format; responsive WebP sources are emitted only for configured input formats.
+
+Before deployment, CI runs the citation tests, builds with `JEKYLL_ENV=production`,
+purges CSS, and checks local links and image sources in the generated HTML.
+The follow-up site link workflow downloads this exact build artifact rather
+than rebuilding a potentially different revision. Deployment runs are serialized.
+CSS used by scroll animations and other dynamic states is retained during purging.
+The stylesheet cache key includes `_sass` and `assets/css/main.scss`, so returning
+visitors receive style changes. `bundle exec ruby tests/cache_bust_test.rb` checks it.
+
+The source link check covers the maintained README, this guide, biography, news,
+and project content. Archived upstream theme documentation and excluded sample
+pages are reference material; Liquid routes are checked in the rendered site.
+
+Run `npm ci` and `npm run format:check` before pushing. Use `npm run format`
+to apply the pinned formatter, and `npm run css:purge` after a production build
+to reproduce the CSS step. Both `_sass` and bibliography/plugin changes trigger
+deployment, even without changes to a page.
