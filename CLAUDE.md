@@ -130,6 +130,8 @@ The citation link renders as Cited by N when a count is known, with its date in
 the tooltip; otherwise it links to a Google Scholar search for that paper.
 These are build-time snapshots, not live browser requests. The existing
 `enable_publication_badges.google_scholar` setting enables this feature.
+The daily deployment at 04:23 UTC refreshes these snapshots even when no website
+content changes. Failed Scholar requests fall back to cached or verified values.
 
 Run the parser and cache checks with
 `bundle exec ruby tests/scholar_profile_test.rb`.
@@ -166,6 +168,9 @@ processes after checking.
 ## Deployment
 
 The default branch is `master`; pushes build and publish to `gh-pages`.
+`Deploy site` also runs daily at 04:23 UTC (`23 4 * * *`) on the default branch,
+and can be started manually from GitHub Actions. Scheduled runs use the same
+build, validation, and publishing steps as pushes.
 `Deploy site` installs ImageMagick explicitly and uses `Gemfile.lock` and
 `package-lock.json` for reproducible tools. Animated GIFs stay in their original
 format; responsive WebP sources are emitted only for configured input formats.

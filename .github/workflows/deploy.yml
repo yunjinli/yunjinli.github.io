@@ -5,6 +5,9 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
+  schedule:
+    # Refresh citation counts daily at 04:23 UTC, away from the hourly rush.
+    - cron: "23 4 * * *"
   workflow_dispatch:
 
 permissions:
