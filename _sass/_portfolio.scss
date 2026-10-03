@@ -438,14 +438,16 @@ html[data-theme="dark"] .portfolio-affiliations img.portfolio-logo-wide {
       flex-wrap: wrap;
       gap: 6px;
     }
-    .links a.btn {
+    .links .btn {
       display: inline-flex;
       align-items: center;
       gap: 4px;
       min-height: 26px;
       line-height: 1.4;
       margin: 0;
-      border-color: var(--global-divider-color);
+      border: 1px solid var(--global-divider-color);
+      background: transparent;
+      color: var(--global-text-color);
       border-radius: 5px;
       padding: 4px 9px;
       font-size: 10px;
@@ -456,6 +458,10 @@ html[data-theme="dark"] .portfolio-affiliations img.portfolio-logo-wide {
       &:hover {
         background: var(--portfolio-tint);
       }
+      &[aria-expanded="true"] {
+        background: var(--portfolio-tint);
+        border-color: var(--global-theme-color);
+      }
       i,
       span {
         color: inherit;
@@ -465,6 +471,51 @@ html[data-theme="dark"] .portfolio-affiliations img.portfolio-logo-wide {
       max-height: 18px;
       width: auto;
     }
+  }
+}
+
+.publication-abstract-chevron {
+  width: 5px;
+  height: 5px;
+  margin: -3px 1px 0 3px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 250ms ease;
+}
+.publication-abstract-toggle[aria-expanded="true"] .publication-abstract-chevron {
+  transform: translateY(2px) rotate(225deg);
+}
+.publication-abstract {
+  text-align: left;
+
+  &.is-collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 280ms ease,
+      opacity 200ms ease;
+  }
+  &.is-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+.publication-abstract-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.publication-abstract-content {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--global-divider-color);
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--global-text-color-light);
   }
 }
 
