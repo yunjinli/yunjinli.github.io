@@ -242,11 +242,12 @@
       {% endif %}
       {% include publication-citations.liquid %}
       {% if entry.github %}
+        {% assign github_repo = entry.github | remove: 'https://github.com/' %}
         <a
-          href="https://github.com/{{ entry.github }}"
+          href="https://github.com/{{ github_repo | escape }}"
           class="publication-stars btn btn-sm z-depth-0"
-          data-github-repo="{{ entry.github | escape }}"
-          aria-label="{{ entry.github | escape }} on GitHub"
+          data-github-repo="{{ github_repo | escape }}"
+          aria-label="{{ github_repo | escape }} on GitHub"
         >
           <i class="fa-brands fa-github" aria-hidden="true"></i> <span data-star-label>GitHub</span>
         </a>

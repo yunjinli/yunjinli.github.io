@@ -3,12 +3,13 @@
 # -----------------------------------------------------------------------------
 
 title: blank # the website title (if blank, full name will be used instead)
-first_name: Jim Yun-Jin
-middle_name:
+first_name: Jim
+middle_name: Yun-Jin
 last_name: Li
 email: jim.li@tum.de
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design.
+  Jim Yun-Jin Li is a PhD student at TUM working on safe embodied interaction
+  for humanoid robots and 3D scene understanding.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
@@ -339,6 +340,7 @@ filtered_bibtex_keywords:
     bibtex_show,
     blog,
     code,
+    google_scholar,
     google_scholar_id,
     hf-dataset,
     html,

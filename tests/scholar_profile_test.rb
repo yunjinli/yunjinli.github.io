@@ -144,16 +144,78 @@ class ScholarProfileTest < Minitest::Test
     assert_equal fresh, cache["profile-#{PROFILE}"]
   end
 
-  def test_title_alias_matching_and_newer_verified_values
-    publications = {
-      "renamed" => { "titles" => ["New title", "A Research-Paper"], "citations" => nil },
-      "missing" => { "titles" => ["Unrelated paper"], "citations" => 17 },
-      "newer" => { "titles" => ["A research paper"], "citations" => 1500, "checked_at" => "2026-10-04T12:00:00Z" },
-    }
-    Jekyll::ScholarProfile.merge!(publications, parsed)
-    assert_equal 1234, publications["renamed"]["citations"]
-    assert_equal "paper-id", publications["renamed"]["article_id"]
-    assert_equal 17, publications["missing"]["citations"]
-    assert_equal 1500, publications["newer"]["citations"]
+  def scholar_url(article_id = "paper-id", profile_id = PROFILE)
+    "https://scholar.google.com/citations?view_op=view_citation&user=#{profile_id}&citation_for_view=#{profile_id}:#{article_id}"
+  end
+
+  def test_bibtex_link_identifies_paper_after_title_changes_and_overrides_default_profile
+    entry = { "title" => "Completely renamed", "google_scholar" => scholar_url }
+    citation = Jekyll::ScholarProfile.citation(entry, default_profile_id: "another-profile", cache: {}, fetcher: lambda do |profile_id|
+      assert_equal PROFILE, profile_id
+      parsed
+    end)
+    assert_equal 1234, citation["citations"]
+    assert_equal "paper-id", citation["article_id"]
+    assert_equal CHECKED_AT, citation["checked_at"]
+    assert_includes citation["url"], "citation_for_view=#{PROFILE}:paper-id"
+  end
+
+  def test_same_title_papers_keep_separate_counts_and_share_one_profile_request
+    data = api_profile
+    data["articles"] << { "title" => "A research paper", "citation_id" => "#{PROFILE}:second-id", "cited_by" => { "total" => 0 } }
+    fresh = Jekyll::ScholarProfile.parse_searchapi(data, PROFILE, Time.now.utc.iso8601)
+    cache = {}
+    attempts = 0
+    fetcher = lambda do |_|
+      attempts += 1
+      fresh
+    end
+    counts = ["paper-id", "second-id"].map do |id|
+      Jekyll::ScholarProfile.citation({ "title" => "A research paper", "google_scholar" => scholar_url(id) },
+        default_profile_id: nil, cache: cache, fetcher: fetcher)["citations"]
+    end
+    assert_equal [1234, 0], counts
+    assert_equal 1, attempts
+  end
+
+  def test_existing_id_field_and_html_escaped_links_remain_supported
+    legacy = Jekyll::ScholarProfile.reference({ "google_scholar_id" => "paper-id" }, PROFILE)
+    full = Jekyll::ScholarProfile.reference({ "google_scholar" => scholar_url.gsub("&", "&amp;") }, nil)
+    assert_equal legacy, full
+  end
+
+  def test_missing_or_invalid_references_use_title_search_without_fetching
+    invalid_links = [nil, "https://scholar.google.com/citations?user=#{PROFILE}",
+      scholar_url.sub("scholar.google.com", "example.com"), scholar_url.sub("user=#{PROFILE}", "user=other"),
+      "javascript:alert(1)", "not a URL"]
+    invalid_links.each do |link|
+      citation = Jekyll::ScholarProfile.citation({ "title" => "Title & subtitle", "google_scholar" => link },
+        default_profile_id: PROFILE, cache: {}, fetcher: ->(_) { flunk "Unexpected request" })
+      assert_equal({ "url" => "https://scholar.google.com/scholar?q=Title+%26+subtitle" }, citation)
+    end
+  end
+
+  def test_missing_count_keeps_article_link_without_inventing_zero
+    citation = Jekyll::ScholarProfile.citation({ "google_scholar" => scholar_url("missing-id") },
+      default_profile_id: nil, cache: {}, fetcher: ->(_) { parsed })
+    refute citation.key?("citations")
+    assert_includes citation["url"], "citation_for_view=#{PROFILE}:missing-id"
+  end
+
+  def test_failed_refresh_can_read_previous_title_indexed_cache
+    old = parsed
+    old["checked_at"] = "2020-01-01T00:00:00Z"
+    old["articles"] = { "a research paper" => old["articles"].values.first }
+    citation = Jekyll::ScholarProfile.citation({ "google_scholar" => scholar_url },
+      default_profile_id: nil, cache: { "profile-#{PROFILE}" => old }, fetcher: ->(_) { raise IOError, "offline" })
+    assert_equal 1234, citation["citations"]
+    assert_equal CHECKED_AT, citation["checked_at"]
+  end
+
+  def test_failed_request_without_cache_keeps_article_link
+    citation = Jekyll::ScholarProfile.citation({ "google_scholar" => scholar_url },
+      default_profile_id: nil, cache: {}, fetcher: ->(_) { raise IOError, "offline" })
+    refute citation.key?("citations")
+    assert_includes citation["url"], "citation_for_view=#{PROFILE}:paper-id"
   end
 end

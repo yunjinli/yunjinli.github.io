@@ -1,0 +1,17 @@
+- name: National Tsing Hua University
+  url: https://nthu-en.site.nthu.edu.tw/
+  logo: /assets/img/nthu_logo.png
+  height: 29
+- name: Technical University of Munich
+  url: https://www.tum.de/en/
+  logo: /assets/img/tum_logo.png
+  height: 29
+- name: Learning Systems and Robotics Lab
+  url: https://www.ce.cit.tum.de/lsy/home/
+  logo: /assets/img/learnsyslab_logo.PNG
+  height: 29
+- name: Munich Center for Machine Learning
+  url: https://mcml.ai/
+  logo: /assets/img/MCML_Logo_os.png
+  height: 17
+  wide: true

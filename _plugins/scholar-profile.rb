@@ -12,10 +12,6 @@ module Jekyll
     DAY = 86_400
     RETRY_DELAY = 3_600
 
-    def self.normalize(title)
-      title.to_s.unicode_normalize(:nfkc).downcase.gsub(/[^\p{L}\p{N}]/, "")
-    end
-
     def self.timestamp(value)
       Time.iso8601(value.to_s).to_i
     rescue ArgumentError
@@ -42,7 +38,7 @@ module Jekyll
         # Scholar uses a blank count cell for uncited papers on a valid profile.
         next unless value.empty? || value.match?(/\A\d+\z/)
 
-        articles[normalize(title.text)] = {
+        articles[article_id] = {
           "article_id" => article_id,
           "citations" => value.empty? ? 0 : value.to_i,
           "checked_at" => checked_at,
@@ -69,16 +65,15 @@ module Jekyll
 
       articles = {}
       data["articles"].each do |article|
-        next unless article.is_a?(Hash) && article["title"].is_a?(String)
+        next unless article.is_a?(Hash)
 
         author, article_id = article["citation_id"].to_s.split(":", 2)
         next unless author == profile_id && article_id && article_id.match?(/\A[\w-]+\z/)
 
         count = article["cited_by"].is_a?(Hash) ? article["cited_by"]["total"] : nil
-        title = normalize(article["title"])
-        next unless count.is_a?(Integer) && count >= 0 && !title.empty?
+        next unless count.is_a?(Integer) && count >= 0
 
-        articles[title] = { "article_id" => article_id, "citations" => count, "checked_at" => checked_at }
+        articles[article_id] = { "article_id" => article_id, "citations" => count, "checked_at" => checked_at }
       end
       raise "SearchApi profile contained no readable citation counts" if articles.empty?
 
@@ -122,37 +117,57 @@ module Jekyll
         message = error.message
         api_key = ENV["SEARCHAPI_API_KEY"].to_s.strip
         message = message.gsub(api_key, "[REDACTED]") unless api_key.empty?
-        Jekyll.logger.warn "Google Scholar:", "#{error.class}: #{message}; keeping verified citation values."
+        Jekyll.logger.warn "Google Scholar:", "#{error.class}: #{message}; retaining cached counts where available."
         previous
       end
     end
 
-    def self.merge!(publications, profile)
-      return unless profile
+    # BibTeX owns the reference; the cache owns only fetched citation data.
+    def self.reference(entry, default_profile_id)
+      link = entry["google_scholar"].to_s.strip
+      if link.empty?
+        profile_id = default_profile_id.to_s
+        article_id = entry["google_scholar_id"].to_s
+      else
+        uri = URI.parse(CGI.unescapeHTML(link))
+        return unless ["http", "https"].include?(uri.scheme) && uri.host == "scholar.google.com" && uri.path == "/citations"
 
-      publications.each_value do |entry|
-        match = Array(entry["titles"]).filter_map { |title| profile["articles"][normalize(title)] }.first
-        next unless match
-        next if timestamp(entry["checked_at"]) > timestamp(match["checked_at"])
-
-        entry.merge!(match)
+        query = CGI.parse(uri.query.to_s)
+        profile_id, article_id = query.fetch("citation_for_view", []).first.to_s.split(":", 2)
+        user = query.fetch("user", []).first
+        return if user && user != profile_id
       end
+      return unless profile_id.to_s.match?(/\A[\w-]+\z/) && article_id.to_s.match?(/\A[\w-]+\z/)
+
+      {
+        "profile_id" => profile_id,
+        "article_id" => article_id,
+        "url" => "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=#{profile_id}&citation_for_view=#{profile_id}:#{article_id}",
+      }
+    rescue URI::InvalidURIError, ArgumentError
+      nil
+    end
+
+    def self.citation(entry, default_profile_id:, cache:, fetcher: method(:fetch))
+      result = reference(entry, default_profile_id)
+      return { "url" => "https://scholar.google.com/scholar?q=#{CGI.escape(entry['title'].to_s)}" } unless result
+
+      profile = load(cache, result["profile_id"], fetcher: fetcher)
+      # Values also support snapshots cached before indexing switched from titles to IDs.
+      match = profile && profile.fetch("articles", {}).values.find { |article| article["article_id"] == result["article_id"] }
+      if match && match["citations"].is_a?(Integer) && match["citations"] >= 0
+        result.merge!("citations" => match["citations"], "checked_at" => match["checked_at"])
+      end
+      result
     end
   end
 
-  class ScholarProfileGenerator < Generator
-    safe true
-    priority :low
-
-    def generate(site)
-      return unless site.config.dig("enable_publication_badges", "google_scholar")
-
-      data = site.data["scholar_citations"]
-      profile_id = site.config["scholar_userid"].to_s
-      return unless data && data["profile_id"] == profile_id && !profile_id.empty?
-
-      profile = ScholarProfile.load(Jekyll::Cache.new("ScholarProfile"), profile_id)
-      ScholarProfile.merge!(data.fetch("publications", {}), profile)
+  module ScholarCitationFilter
+    def scholar_citation(entry)
+      site = @context.registers[:site]
+      ScholarProfile.citation(entry, default_profile_id: site.config["scholar_userid"], cache: Jekyll::Cache.new("ScholarProfile"))
     end
   end
 end
+
+Liquid::Template.register_filter(Jekyll::ScholarCitationFilter)

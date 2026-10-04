@@ -1,64 +1,58 @@
-# yunjinli.github.io
+# Website maintenance guide
 
-Personal academic site (Jekyll, al-folio theme) with a custom portfolio homepage.
-The original theme README is in `README_Orig.md`.
+This repository is Jim's academic website: Jekyll with a custom portfolio
+homepage on the al-folio theme. This guide describes the maintained site;
+`README_Orig.md`, `INSTALL.md`, `CUSTOMIZE.md`, `FAQ.md` and `CONTRIBUTING.md`
+are inherited theme references. Start with the [edit map in README.md](README.md).
 
-## Homepage
+## Homepage content and settings
 
-- `_pages/about.md`: short biography and homepage front matter. Set
-  `profile.image` to a filename in `assets/img/` to change the portrait.
-- `_layouts/about.liquid`: biography on the left, portrait on the right,
-  affiliations, news, selected research, selected projects, and student contact.
-  The bio and portrait stack on narrow screens.
-- `_includes/portfolio-header.liquid`: standard section links, CV, and theme toggle.
-- `_includes/portfolio-projects.liquid`: project cards; selected entries show in
-  the initial view until the reader expands the list.
-- `_includes/portfolio-footer.liquid`: homepage credits and contact information.
-- `_sass/_portfolio.scss`: scoped homepage styles, breakpoints, and motion.
-- `assets/js/portfolio.js`: active navigation, inline list expansion, individual card entrances on scroll, and
-  video previews on hover. Native video controls remain available on touch
-  devices. Reduced-motion preferences disable automatic animation and previews.
-  Cards fade upward after entering the viewport, with a brief stagger within grid rows.
-  They replay after leaving the screen completely; newly expanded cards follow
-  the same behavior. Headings animate separately. Cards are prepared only after
-  scroll observers are installed; reduced motion, keyboard focus, and no-JS
-  viewing keep the content visible.
+Edit `_pages/about.md` for the biography (Markdown below the closing `---`)
+and these front matter fields:
 
-Without JavaScript, complete lists remain visible. All news / All projects /
-All publications controls appear only when there are more entries to reveal.
-News uses `announcements.limit`; publications and projects use `selected`.
-The controls expand in place and change to Show less. Hashes `#all-news`,
-`#all-publications`, and `#all-projects` open the complete corresponding list.
-The old `/news/`, `/publications/`, and `/projects/` routes redirect to these
-homepage hashes through `_layouts/portfolio-redirect.liquid`.
+| Field                                                       | Purpose                                                                                         |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `eyebrow`                                                   | Short research tagline above the name                                                           |
+| `profile.image`                                             | Portrait filename inside `assets/img/`                                                          |
+| `profile.alt`                                               | Accessible description of the portrait                                                          |
+| `profile.caption`                                           | Role and affiliation below the portrait                                                         |
+| `news`, `selected_papers`, `projects`                       | Show or hide the corresponding section; Research and Projects navigation follows these switches |
+| `contact.eyebrow`, `contact.heading`, `contact.description` | Student and collaborator contact copy, as plain text                                            |
+| `contact.topics_url`                                        | Open research topics destination; omit to hide this link                                        |
 
-The homepage
-uses `portfolio: true` to select its navigation, footer, styles, and script.
-The former `_sass/_terminal.scss` and `assets/js/fetch-terminal.js` are retained
-as legacy sources but are no longer loaded.
+Keep `layout: about`, `permalink: /` and `portfolio: true` for the homepage.
+YAML indentation matters. Use `>-` for multiline plain text, following the
+existing contact description. The biography supports Markdown links and emphasis.
 
-## Adding a news item
+Edit `_config.yml` for:
 
-Create a file in `_news/`, for example `_news/announcement_8.md`:
+- `first_name`, `middle_name`, `last_name`: displayed name. The main heading
+  emphasizes the first and last names; the navigation uses those two only.
+- `email`, `github_username`, `scholar_userid`, `linkedin_username`: contact
+  and profile links. Use the profile ID/username, not the full URL.
+- `cv_url`: CV destination; leave blank to hide the navigation link.
+- `description`: site description for search and link metadata.
+- `announcements.enabled` and `announcements.limit`: show news and set the
+  number of items visible before expanding.
+- `enable_publication_badges.google_scholar`: show Scholar links and counts.
+- `enable_darkmode`: show the theme switch. The existing theme script remembers
+  visitor preferences and uses a time-of-day default.
+- `scholar.first_name` and `scholar.last_name`: author names to highlight in
+  publications. These match the BibTeX author, independently of the display name.
+- `max_author_limit` and `scholar.style`: bibliography presentation.
+- `icon`: favicon filename in `assets/img/` (currently `favicon.svg`).
+- `last_updated`, `impressum_path`: optional footer information.
+- `footer_text`: footer copy on article/archive pages. Homepage credits use
+  `_includes/portfolio-footer.liquid`.
 
-```yaml
----
-layout: post
-date: 2026-10-03 12:00:00-0000
-inline: true
-related_posts: false
----
-Short announcement text, emoji supported.
-```
-
-- `inline: true` shows the announcement body in the list. Otherwise add a
-  `title` for a separate post.
-- The homepage shows the newest items, limited by `_config.yml`'s
-  `announcements.limit`. All news expands the complete list in place.
+Affiliation logos come from `_data/affiliations.yml`, in file order. Each item
+has `name` (also the image description), `url`, `logo` (asset path) and `height`
+in pixels. `wide: true` allows a wider logo, as used for MCML. To add or change
+an affiliation, edit this list and put any new logo in `assets/img/`.
 
 ## Adding a publication
 
-Add a BibTeX entry to `_bibliography/papers.bib`:
+Add an entry with a unique BibTeX key to `_bibliography/papers.bib`:
 
 ```bibtex
 @article{lastname2026key,
@@ -66,29 +60,117 @@ Add a BibTeX entry to `_bibliography/papers.bib`:
   author={Last, First and Other, Author},
   journal={Venue Name},
   year={2026},
-  html={https://yunjinli.github.io/project-page/},
-  arxiv={2601.xxxxx},
+  abstract={A short description of the paper.},
   selected={true},
-  github={yunjinli/repo-name},
-  preview={paper-preview.gif}
+  html={https://example.com/project/},
+  preview={paper-preview.gif},
+  google_scholar={https://scholar.google.com/citations?view_op=view_citation&user=PROFILE_ID&citation_for_view=PROFILE_ID:ARTICLE_ID},
+  github={owner/repository},
+  hf-dataset={https://huggingface.co/datasets/owner/dataset}
 }
 ```
 
-- `selected={true}` includes the entry in the homepage's Selected research.
-  All publications expands the full bibliography in place. The control is
-  omitted when all publications are already selected and visible.
-- `html` supplies the Project link and the clickable title on the homepage.
-- `preview` is a filename in `assets/img/publication_preview/` or a full URL.
-- `arxiv` and `github` are optional extra links.
-- GitHub stars use the same button style as the other links. The browser reads
-  the public GitHub API and caches counts for an hour in session storage;
-  failures fall back to a plain GitHub link.
-- `filtered_bibtex_keywords` in `_config.yml` controls which custom keys are
-  hidden in rendered citations.
+Replace the example values; omit fields you do not need. In particular, paste
+the actual Scholar article URL rather than the placeholder IDs above.
+
+| Optional field       | Effect                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `selected={true}`    | Show in the initial Selected research list                                                                               |
+| `html`               | Project button and clickable paper title                                                                                 |
+| `preview`            | Image filename in `assets/img/publication_preview/`, or a full URL                                                       |
+| `abstract`           | Expandable Abs button                                                                                                    |
+| `google_scholar`     | Full Google Scholar article URL for both the citation link and automatic count matching                                  |
+| `google_scholar_id`  | Alternative: article ID only, paired with `_config.yml`'s `scholar_userid`; a full `google_scholar` URL takes precedence |
+| `github`             | `owner/repository` or `https://github.com/owner/repository`, without a trailing slash                                    |
+| `hf-dataset`         | `owner/dataset` or `https://huggingface.co/datasets/owner/dataset`, without a trailing slash                             |
+| `arxiv`              | arXiv identifier, without a URL prefix                                                                                   |
+| `pdf`                | Filename in `assets/pdf/`, or a full URL                                                                                 |
+| `bibtex_show={true}` | Show the Bib button                                                                                                      |
+
+All publications expands the full bibliography in place. There is no separate
+publication list to maintain. Website-only fields are hidden from the displayed
+BibTeX by `filtered_bibtex_keywords` in `_config.yml`.
+
+### Citation links and automatic updates
+
+Open your Google Scholar profile, click a paper's title, and copy the article
+page URL into that entry's `google_scholar` field. It must include
+`citation_for_view=PROFILE_ID:ARTICLE_ID`. A profile URL or a Cited by results
+URL does not identify the paper for this integration.
+
+`_plugins/scholar-profile.rb` matches the stable article ID, so changing a
+paper's title or BibTeX key does not require an alias or code update. BibTeX is
+the source of publication references; fetched counts live in the build cache.
+There is no separate per-paper YAML mapping or manually maintained count.
+
+The plugin requests each referenced author profile as needed, reusing successful
+snapshots for 24 hours and throttling failed attempts for one hour. With
+`SEARCHAPI_API_KEY` present, it uses
+[SearchApi's Google Scholar Author API](https://www.searchapi.io/docs/google-scholar-author).
+SearchApi (`searchapi.io`) is different from SerpApi. Without the key, local
+builds try Scholar directly, which may be blocked; this does not stop the build.
+
+- A known count renders as **Cited by N**, with its check date in the tooltip.
+- A missing count leaves a working link to the configured Scholar article.
+- A missing or invalid article reference falls back to a title search, without
+  fetching a count. Unknown counts are never presented as zero.
+- Failed refreshes retain the last successful snapshot when available. A cold
+  cache has no count until a fetch succeeds. Clearing the Jekyll cache or
+  changing `_config.yml` can invalidate the local snapshot.
+
+Counts are build-time snapshots. The daily deployment at **04:23 UTC** refreshes
+eligible snapshots; visits to the website do not make SearchApi requests.
+GitHub may delay scheduled runs. To request a rebuild after changing content or
+credentials, use Actions → Deploy site → Run workflow on `master`; fresh
+snapshots still obey the 24-hour cache window.
+
+Set the secret under repository Settings → Secrets and variables → Actions,
+using the exact name `SEARCHAPI_API_KEY`. Never put it in BibTeX, `_config.yml`,
+JavaScript, docs or committed files. A local API key is optional and unnecessary
+for ordinary content edits.
+
+CI supplies the secret only during production builds for pushes, scheduled and
+manual runs, never pull requests. Requests use a Bearer header. Only article
+IDs, counts and check timestamps are cached. CI restores/saves the parsed
+Scholar cache between deployments and verifies the key is absent from generated
+files before publishing. Pull requests do not restore or save that cache.
+
+### GitHub stars and Hugging Face downloads
+
+The browser reads these public APIs via `assets/js/portfolio.js`:
+
+- `github` adds a GitHub button that shows repository stars when available.
+  Counts are cached for one hour in session storage. A failed fetch leaves a
+  working GitHub link.
+- `hf-dataset` adds a button with the local official Hugging Face icon
+  (`assets/img/huggingface.svg`). The request uses `downloadsAllTime`, not the
+  monthly `downloads` field. Counts are cached for one hour in session storage;
+  failures retain a cached total or leave a working Dataset link. No key is needed.
+
+These browser metrics update independently of the daily citation rebuild.
+Without JavaScript, the buttons still link to their destinations.
+
+## Adding news
+
+Create a file in `_news/` with a unique name, for example `announcement_8.md`:
+
+```yaml
+---
+layout: post
+date: 2026-10-04 12:00:00+0200
+inline: true
+related_posts: false
+---
+Short announcement text, with Markdown links and emoji if desired.
+```
+
+`inline: true` displays the announcement body in the list. Otherwise add a
+`title` and write the body as a separate post. The homepage shows the newest
+items first, using `announcements.limit`; All news expands the complete list.
 
 ## Adding a project
 
-Create a file in `_projects/`, for example `_projects/7_project.md`:
+Create a uniquely named Markdown file in `_projects/`:
 
 ```yaml
 ---
@@ -97,124 +179,122 @@ title: Project Title
 description: One-line description
 img: assets/img/project-preview.gif
 # Alternatively: video: assets/video/demo.mp4
-redirect: https://project-page.example
+redirect: https://example.com/project/
 importance: 7
 category: work
-github: yunjinli/repo-name
+github: owner/repository
 selected: true
 ---
+Project description, if using an internal project page.
 ```
 
-- `selected: true` includes the project in the homepage's initial view.
-- All projects expands the remaining projects in place.
+- `selected: true` shows the project initially; All projects reveals the rest.
 - Lower `importance` values sort first.
-- `redirect` links to an external project page; omit it to use the project's
-  generated page and Markdown body.
-- `github` accepts an owner/repository pair or a complete URL.
+- Use `img` or `video` for the preview, with a real asset path.
+- `redirect` links to an external page. Omit it to use the generated project
+  page and Markdown body.
+- `github` accepts an owner/repository pair or a full URL; omit if unavailable.
 
-## Dataset downloads
+## Preview and validation
 
-Publication entries can also include `hf-dataset={https://huggingface.co/datasets/owner/name}`
-(or `hf-dataset={owner/name}`). This adds a dataset button beside citations and
-GitHub stars. `assets/js/portfolio.js` requests `downloadsAllTime` from the public
-Hugging Face API, never the monthly `downloads` field. Totals are cached in the
-browser session for an hour; failed requests preserve a cached total or leave a
-working Dataset link. No API key is required.
-The badge uses the [official Hugging Face logo](https://huggingface.co/front/assets/huggingface_logo-noborder.svg),
-stored locally as `assets/img/huggingface.svg` with a viewBox for scaling.
-
-## Google Scholar citation counts
-
-`_plugins/scholar-profile.rb` reads the configured public Scholar profile once
-per build, reusing successful responses for 24 hours. After failures, requests
-are throttled for an hour. Each paper is matched by title, including aliases
-for renamed papers such as SADG / TRASE. Cached values survive failed requests.
-
-When the `SEARCHAPI_API_KEY` environment variable is present, the build uses
-[SearchApi's Google Scholar Author API](https://www.searchapi.io/docs/google-scholar-author).
-Create the repository secret under Settings → Secrets and variables → Actions
-with that exact name. This integration is for SearchApi (`searchapi.io`), a
-different service from SerpApi. The workflow supplies the secret only to the
-production build for pushes, scheduled runs, and manual runs, never pull requests.
-The request uses a Bearer authorization header; only parsed citation counts,
-article IDs, and check timestamps are cached or rendered. Do not put API keys
-in BibTeX, `_config.yml`, JavaScript, or committed files. Without the secret,
-builds retain the direct Scholar fetch and verified fallback values.
-CI caches the parsed Scholar snapshot and Jekyll's cache configuration between
-deployments so repeat builds reuse recent counts and failed requests can retain
-the last successful snapshot. Pull requests do not access or save this cache.
-
-`_data/scholar_citations.yml` holds verified fallback values keyed by BibTeX ID.
-For a new publication, add its Scholar title under `titles`. When supplying a
-verified snapshot, fill in `citations` (an integer), `article_id` (the part after
-the colon in Scholar's `citation_for_view` URL), and a quoted ISO 8601
-`checked_at` timestamp. Leave unknown counts blank, never zero. Newer verified
-snapshots take precedence over older cached responses.
-
-The citation link renders as Cited by N when a count is known, with its date in
-the tooltip; otherwise it links to a Google Scholar search for that paper.
-These are build-time snapshots, not live browser requests. The existing
-`enable_publication_badges.google_scholar` setting enables this feature.
-The daily deployment at 04:23 UTC refreshes these snapshots even when no website
-content changes. Failed Scholar requests fall back to cached or verified values.
-
-Run the parser and cache checks with
-`bundle exec ruby tests/scholar_profile_test.rb`.
-
-## Other configuration
-
-- `cv_url`: CV destination in navigation.
-- `github_username`, `scholar_userid`, `linkedin_username`, and `email`:
-  homepage profile and contact links.
-- `enable_darkmode`: theme switch; `assets/js/theme.js` retains the existing
-  time-of-day default and remembered visitor preference.
-- `max_author_limit` and `scholar.style`: bibliography rendering.
-- `footer_text`: footer on archive and article pages; homepage credits live in
-  `_includes/portfolio-footer.liquid`.
-- `last_updated` and `impressum_path`: optional footer information.
-
-## Preview and verification
+Run commands from the repository root. CI uses Ruby **3.2.3**, Node.js **22**,
+Bundler and ImageMagick (`convert`). Install those tools, then:
 
 ```sh
-bundle exec jekyll serve --host 0.0.0.0 --port 4321 --livereload
+bundle install
+npm ci
+npm run dev
 ```
 
-Open `http://localhost:4321/`. For a build alone, run
-`bundle exec jekyll build`. Check JavaScript syntax with
-`node --check assets/js/portfolio.js`.
+Open <http://localhost:4321/>. The preview reloads content edits. Restart it after
+editing `_config.yml`, Ruby plugins or dependencies. Stop it with Ctrl+C.
+Notebook pages also require Python 3 and `nbconvert`; CI installs
+`nbconvert==7.17.1`. Install that version in your Python environment if working
+with notebook content. Keep generated output and preview screenshots out of Git.
 
-For visual and interaction checks, use installed headless Chrome with raw CDP
-and Python's `websockets` and `requests` packages. Check desktop and mobile
-layouts, photo placement, section navigation, publication controls, dark mode,
-reduced motion, video previews, and content visibility without JavaScript.
-Keep preview screenshots outside the repository and stop temporary browser
-processes after checking.
+Before pushing, run:
 
-## Deployment
+```sh
+npm run format:check
+npm test
+npm run build
+```
 
-The default branch is `master`; pushes build and publish to `gh-pages`.
-`Deploy site` also runs daily at 04:23 UTC (`23 4 * * *`) on the default branch,
-and can be started manually from GitHub Actions. Scheduled runs use the same
-build, validation, and publishing steps as pushes.
-`Deploy site` installs ImageMagick explicitly and uses `Gemfile.lock` and
-`package-lock.json` for reproducible tools. Animated GIFs stay in their original
-format; responsive WebP sources are emitted only for configured input formats.
+`npm run format` applies the pinned formatter if needed. `npm test` checks
+homepage JavaScript syntax, citation identity/cache/failure behavior, API key
+handling and stylesheet cache invalidation. `npm run build` makes the production
+site in `_site/` and purges unused CSS, using the same command as deployment.
+For a different destination, run:
 
-Before deployment, CI runs the citation tests, builds with `JEKYLL_ENV=production`,
-purges CSS, and checks local links and image sources in the generated HTML.
-The follow-up site link workflow downloads this exact build artifact rather
-than rebuilding a potentially different revision. Deployment runs are serialized.
-The link checker download is pinned, checksum-verified, and retried on transient
-network failures by `bin/install-lychee.sh`.
-CSS used by scroll animations and other dynamic states is retained during purging.
-The stylesheet cache key includes `_sass` and `assets/css/main.scss`, so returning
-visitors receive style changes. `bundle exec ruby tests/cache_bust_test.rb` checks it.
+```sh
+JEKYLL_ENV=production bundle exec jekyll build --lsi --destination /tmp/jim-site
+npm run css:purge -- /tmp/jim-site
+```
 
-The source link check covers the maintained README, this guide, biography, news,
-and project content. Archived upstream theme documentation and excluded sample
-pages are reference material; Liquid routes are checked in the rendered site.
+CI also checks generated links and image paths with the pinned Lychee version
+in `bin/install-lychee.sh`. If Lychee is installed locally:
 
-Run `npm ci` and `npm run format:check` before pushing. Use `npm run format`
-to apply the pinned formatter, and `npm run css:purge` after a production build
-to reproduce the CSS step. Both `_sass` and bibliography/plugin changes trigger
-deployment, even without changes to a page.
+```sh
+lychee --offline --root-dir "$PWD/_site" --no-progress '_site/**/*.html'
+```
+
+After visual changes, inspect desktop and mobile layouts, light/dark themes,
+list expansion, abstracts, keyboard navigation, reduced motion and visibility
+without JavaScript. Keep preview screenshots outside the repository and stop
+temporary browser processes after checking.
+
+## Publishing and troubleshooting
+
+The default branch is **`master`**. Push changes there to trigger deployment, or
+open a pull request for CI validation. The Deploy site workflow installs the
+locked Ruby/Node dependencies and ImageMagick, runs tests, builds the site,
+checks local links/assets, and publishes to `gh-pages` after those checks pass.
+Scheduled and manual runs use the same path. Deployment runs are serialized.
+
+The follow-up site link workflow checks the exact uploaded production artifact;
+it does not rebuild a different revision. Source link checks cover the maintained
+README, this guide, biography, news and projects. Inherited theme docs and excluded
+sample pages are reference material.
+
+| Symptom                          | Where to look                                                                                                                                                       |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Edits missing from the live site | Actions → Deploy site for your commit, then the Pages deployment; confirm the commit was pushed to `master`                                                         |
+| Formatting check fails           | Run `npm run format`, review and commit the result                                                                                                                  |
+| Build fails after a content edit | Check YAML indentation, BibTeX braces/commas, duplicate BibTeX keys and preview file paths                                                                          |
+| Citation count missing           | Confirm the article URL has `citation_for_view`, inspect the Google Scholar build log, and check the secret name/account quota; cached failures retry after an hour |
+| Old citation count remains       | Check the badge tooltip date and last successful daily run; cached counts intentionally survive fetch failures                                                      |
+| Dataset or star count missing    | Confirm the public dataset/repo identifier; browser API limits or blocked requests leave the link usable                                                            |
+| New styles missing               | Run a production build as well as preview; dynamic classes may need the safelist in `purgecss.config.js`                                                            |
+
+## Code map for layout changes
+
+Routine content edits use the files above. Presentation changes use:
+
+- `_layouts/about.liquid`: homepage structure, rendering biography, portrait,
+  affiliations, research, projects and contact content.
+- `_includes/portfolio-header.liquid`, `_includes/portfolio-footer.liquid`:
+  navigation and homepage footer.
+- `_layouts/bib.liquid` and `_includes/publication-citations.liquid`:
+  publication cards, controls and citation badge.
+- `_includes/portfolio-projects.liquid`: project cards.
+- `_sass/_portfolio.scss`: scoped styles, responsive layout and motion.
+- `assets/js/portfolio.js`: navigation, inline expansion, abstract toggles,
+  scroll entrances, public API badges and video previews.
+- `_plugins/scholar-profile.rb`: Scholar reference parsing, API fetch and cache.
+- `_plugins/cache-bust.rb`: asset cache keys, including Sass source changes.
+- `.github/workflows/deploy.yml`: daily schedule, validation and deployment.
+
+All news / All publications / All projects expand inline and show only when
+there are additional items. Without JavaScript, complete lists remain visible.
+The hashes `#all-news`, `#all-publications` and `#all-projects` open full lists;
+the old archive routes redirect to them through `_layouts/portfolio-redirect.liquid`.
+
+Cards fade upward on entering the viewport and replay after leaving it fully.
+Reduced motion, keyboard focus and no-JS viewing keep content accessible.
+Hover video previews respect reduced motion; touch users retain native controls.
+Animated GIFs retain their original format; responsive WebP variants are emitted
+only for configured image formats. Keep these behaviors when changing the layout.
+
+`portfolio: true` selects the homepage navigation, footer, styles and script.
+`_sass/_terminal.scss` and `assets/js/fetch-terminal.js` are legacy sources and
+are not loaded by the current homepage.

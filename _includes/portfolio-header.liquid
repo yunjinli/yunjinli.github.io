@@ -1,12 +1,21 @@
 <a class="portfolio-skip" href="#main-content">Skip to content</a>
 <header class="portfolio-header">
   <nav class="portfolio-nav" aria-label="Main navigation">
-    <a class="portfolio-brand" href="{{ '/' | relative_url }}">Jim Li</a>
+    <a class="portfolio-brand" href="{{ '/' | relative_url }}">
+      {{- site.first_name | escape }}
+      {{ site.last_name | escape -}}
+    </a>
     <div class="portfolio-nav-links">
       <a href="#about">About</a>
-      <a href="#about-publications">Research</a>
-      <a href="#about-projects">Projects</a>
-      <a href="{{ site.cv_url }}" target="_blank" rel="noopener noreferrer">CV <span aria-hidden="true">↗</span></a>
+      {% if page.selected_papers -%}
+        <a href="#about-publications">Research</a>
+      {%- endif %}
+      {% if page.projects -%}
+        <a href="#about-projects">Projects</a>
+      {%- endif %}
+      {% if site.cv_url %}
+        <a href="{{ site.cv_url }}" target="_blank" rel="noopener noreferrer">CV <span aria-hidden="true">↗</span></a>
+      {% endif %}
       {% if site.enable_darkmode %}
         <button id="light-toggle" type="button" title="Change color theme" aria-label="Change color theme">
           <i class="ti ti-sun-moon" id="light-toggle-system" aria-hidden="true"></i>

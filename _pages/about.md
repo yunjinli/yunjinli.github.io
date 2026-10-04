@@ -3,11 +3,22 @@ layout: about
 title: about
 permalink: /
 portfolio: true
+eyebrow: Robotics & embodied intelligence
 profile:
   image: terminal-photo.jpg
+  alt: Portrait of Jim Li
+  caption: PhD student · TUM
 news: true
 selected_papers: true
 projects: true
+contact:
+  eyebrow: Students & collaborators
+  heading: Let's work together.
+  description: >-
+    I'm open to thesis, guided research, and internship students, as well as
+    research collaborations. If you'd like to work with me, email your
+    interests, CV, and up-to-date transcripts.
+  topics_url: https://www.ce.cit.tum.de/lsy/join-us/open-research-projects/
 ---
 
 I'm a PhD student at the [Learning Systems and Robotics Lab](https://www.ce.cit.tum.de/lsy/home/) at [TUM](https://www.tum.de/en/), advised by [Prof. Angela Schoellig](https://www.ce.cit.tum.de/lsy/prof-angela-schoellig/).

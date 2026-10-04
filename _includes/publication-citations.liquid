@@ -1,17 +1,8 @@
-{% if site.enable_publication_badges.google_scholar and site.scholar_userid %}
-  {% assign citation = null %}
-  {% if site.data.scholar_citations.profile_id == site.scholar_userid %}
-    {% assign citation = site.data.scholar_citations.publications[entry.key] %}
-  {% endif %}
-  {% assign citation_article = citation.article_id | default: entry.google_scholar_id %}
-  {% if citation_article %}
-    {% capture citation_url %}https://scholar.google.com/citations?view_op=view_citation&hl=en&user={{ site.scholar_userid }}&citation_for_view={{ site.scholar_userid }}:{{ citation_article }}{% endcapture %}
-  {% else %}
-    {% capture citation_url %}https://scholar.google.com/scholar?q={{ entry.title | url_encode }}{% endcapture %}
-  {% endif %}
+{% if site.enable_publication_badges.google_scholar %}
+  {% assign citation = entry | scholar_citation %}
   <a
     class="publication-citations btn btn-sm z-depth-0"
-    href="{{ citation_url }}"
+    href="{{ citation.url | escape }}"
     {% if citation.citations != null %}
       title="Google Scholar citations{% if citation.checked_at %} · Checked {{ citation.checked_at | date: '%b %d, %Y' }}{% endif %}"
       aria-label="{{ citation.citations }} Google Scholar citations for {{ entry.title | escape }}"

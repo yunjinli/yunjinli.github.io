@@ -1,4 +1,4 @@
-// Optional motion only: every section and link works without JavaScript.
+// Progressive enhancement: navigation, cards, and metric links work without JavaScript.
 (function () {
   "use strict";
 
