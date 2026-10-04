@@ -251,6 +251,26 @@
           <i class="fa-brands fa-github" aria-hidden="true"></i> <span data-star-label>GitHub</span>
         </a>
       {% endif %}
+      {% if entry['hf-dataset'] %}
+        {% assign dataset_id = entry['hf-dataset'] | remove: 'https://huggingface.co/datasets/' %}
+        <a
+          href="https://huggingface.co/datasets/{{ dataset_id | escape }}"
+          class="publication-dataset btn btn-sm z-depth-0"
+          data-hf-dataset="{{ dataset_id | escape }}"
+          title="Dataset on Hugging Face"
+          aria-label="{{ dataset_id | escape }} dataset on Hugging Face"
+        >
+          <img
+            class="publication-hf-icon"
+            src="{{ '/assets/img/huggingface.svg' | relative_url | bust_file_cache }}"
+            width="14"
+            height="14"
+            alt=""
+            aria-hidden="true"
+          >
+          <span data-download-label>Dataset</span>
+        </a>
+      {% endif %}
     </div>
     {% if site.enable_publication_badges %}
       {% assign entry_has_altmetric_badge = entry.altmetric or entry.doi or  entry.eprint or entry.pmid or entry.isbn %}

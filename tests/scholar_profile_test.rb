@@ -24,6 +24,82 @@ class ScholarProfileTest < Minitest::Test
     Jekyll::ScholarProfile.parse(profile_html(**args), PROFILE, CHECKED_AT)
   end
 
+  def api_profile(count: 1234, author: PROFILE)
+    {
+      "search_metadata" => { "status" => "Success" },
+      "articles" => [{ "title" => "A research paper", "citation_id" => "#{author}:paper-id", "cited_by" => { "total" => count } }],
+    }
+  end
+
+  def with_api_key
+    original = ENV["SEARCHAPI_API_KEY"]
+    ENV["SEARCHAPI_API_KEY"] = "test-private-api-key"
+    yield ENV["SEARCHAPI_API_KEY"]
+  ensure
+    original.nil? ? ENV.delete("SEARCHAPI_API_KEY") : ENV["SEARCHAPI_API_KEY"] = original
+  end
+
+  def test_searchapi_parses_totals_and_zero_without_caching_response_metadata
+    data = api_profile
+    data["search_parameters"] = { "api_key" => "must-not-be-cached" }
+    assert_equal parsed, Jekyll::ScholarProfile.parse_searchapi(data, PROFILE, CHECKED_AT)
+    entry = Jekyll::ScholarProfile.parse_searchapi(api_profile(count: 0), PROFILE, CHECKED_AT)["articles"].values.first
+    assert_equal 0, entry["citations"]
+  end
+
+  def test_searchapi_rejects_errors_unknown_counts_and_wrong_profiles
+    [nil, "3", -1].each do |count|
+      assert_raises(RuntimeError) { Jekyll::ScholarProfile.parse_searchapi(api_profile(count: count), PROFILE, CHECKED_AT) }
+    end
+    assert_raises(RuntimeError) { Jekyll::ScholarProfile.parse_searchapi(api_profile(author: "other"), PROFILE, CHECKED_AT) }
+    assert_raises(RuntimeError) { Jekyll::ScholarProfile.parse_searchapi({ "error" => "Quota exhausted" }, PROFILE, CHECKED_AT) }
+  end
+
+  def test_searchapi_uses_authorization_header_and_never_puts_key_in_url
+    with_api_key do |key|
+      response = Struct.new(:code, :body).new("200", JSON.generate(api_profile))
+      http = Object.new
+      http.define_singleton_method(:request) do |request|
+        raise "Missing authorization" unless request["Authorization"] == "Bearer #{key}"
+        raise "Key in URL" if request.path.include?(key) || request.path.include?("api_key")
+        raise "Wrong profile" unless request.path.include?("author_id=#{PROFILE}")
+        response
+      end
+      transport = Object.new
+      connection = nil
+      transport.define_singleton_method(:start, lambda do |*args, **options, &block|
+        connection = [args, options]
+        block.call(http)
+      end)
+      result = Jekyll::ScholarProfile.fetch(PROFILE, transport: transport)
+      assert_equal ["www.searchapi.io", 443], connection[0]
+      assert connection[1][:use_ssl]
+      assert_equal 1234, result["articles"].values.first["citations"]
+      refute_includes JSON.generate(result), key
+    end
+  end
+
+  def test_api_failures_preserve_counts_and_redact_credentials
+    with_api_key do |key|
+      old = { "articles" => {}, "checked_at" => "2026-10-01T12:00:00Z" }
+      result = nil
+      out, err = capture_io do
+        result = Jekyll::ScholarProfile.load({ "profile-#{PROFILE}" => old }, PROFILE, now: NOW,
+          fetcher: ->(_) { raise "Upstream failure for #{key}" })
+      end
+      assert_equal old, result
+      refute_includes out + err, key
+      assert_includes out + err, "[REDACTED]"
+    end
+  end
+
+  def test_adding_api_key_retries_after_a_failed_direct_request
+    cache = { "attempt-direct-#{PROFILE}" => NOW }
+    with_api_key do
+      assert_equal parsed, Jekyll::ScholarProfile.load(cache, PROFILE, now: NOW, fetcher: ->(_) { parsed })
+    end
+  end
+
   def test_parses_exact_counts_and_true_zero
     entry = parsed["articles"].values.first
     assert_equal 1234, entry["citations"]

@@ -112,12 +112,37 @@ selected: true
   generated page and Markdown body.
 - `github` accepts an owner/repository pair or a complete URL.
 
+## Dataset downloads
+
+Publication entries can also include `hf-dataset={https://huggingface.co/datasets/owner/name}`
+(or `hf-dataset={owner/name}`). This adds a dataset button beside citations and
+GitHub stars. `assets/js/portfolio.js` requests `downloadsAllTime` from the public
+Hugging Face API, never the monthly `downloads` field. Totals are cached in the
+browser session for an hour; failed requests preserve a cached total or leave a
+working Dataset link. No API key is required.
+The badge uses the [official Hugging Face logo](https://huggingface.co/front/assets/huggingface_logo-noborder.svg),
+stored locally as `assets/img/huggingface.svg` with a viewBox for scaling.
+
 ## Google Scholar citation counts
 
 `_plugins/scholar-profile.rb` reads the configured public Scholar profile once
 per build, reusing successful responses for 24 hours. After failures, requests
 are throttled for an hour. Each paper is matched by title, including aliases
 for renamed papers such as SADG / TRASE. Cached values survive failed requests.
+
+When the `SEARCHAPI_API_KEY` environment variable is present, the build uses
+[SearchApi's Google Scholar Author API](https://www.searchapi.io/docs/google-scholar-author).
+Create the repository secret under Settings → Secrets and variables → Actions
+with that exact name. This integration is for SearchApi (`searchapi.io`), a
+different service from SerpApi. The workflow supplies the secret only to the
+production build for pushes, scheduled runs, and manual runs, never pull requests.
+The request uses a Bearer authorization header; only parsed citation counts,
+article IDs, and check timestamps are cached or rendered. Do not put API keys
+in BibTeX, `_config.yml`, JavaScript, or committed files. Without the secret,
+builds retain the direct Scholar fetch and verified fallback values.
+CI caches the parsed Scholar snapshot and Jekyll's cache configuration between
+deployments so repeat builds reuse recent counts and failed requests can retain
+the last successful snapshot. Pull requests do not access or save this cache.
 
 `_data/scholar_citations.yml` holds verified fallback values keyed by BibTeX ID.
 For a new publication, add its Scholar title under `titles`. When supplying a

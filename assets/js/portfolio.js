@@ -215,6 +215,61 @@
       });
   });
 
+  // Hugging Face's downloads field is monthly; request downloadsAllTime explicitly.
+  var datasets = new Map();
+  document.querySelectorAll("[data-hf-dataset]").forEach(function (button) {
+    var dataset = button.dataset.hfDataset;
+    if (!/^[\w.-]+\/[\w.-]+$/.test(dataset)) return;
+    if (!datasets.has(dataset)) datasets.set(dataset, []);
+    datasets.get(dataset).push(button);
+  });
+  datasets.forEach(function (buttons, dataset) {
+    function showDownloads(count) {
+      buttons.forEach(function (button) {
+        var label = count.toLocaleString() + (count === 1 ? " download" : " downloads");
+        button.querySelector("[data-download-label]").textContent = "Dataset · " + label;
+        button.title = label + " all time on Hugging Face";
+        button.setAttribute("aria-label", dataset + ": " + label + " all time on Hugging Face");
+      });
+    }
+
+    var cacheKey = "portfolio-hf-downloads-all-time:" + dataset;
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(cacheKey));
+      if (cached && Number.isSafeInteger(cached.count) && cached.count >= 0) {
+        showDownloads(cached.count);
+        if (Date.now() - cached.checkedAt < 3600000) return;
+      }
+    } catch (_) {
+      /* Storage is optional; the dataset link remains available. */
+    }
+
+    var controller = new AbortController();
+    var timeout = window.setTimeout(function () {
+      controller.abort();
+    }, 5000);
+    fetch("https://huggingface.co/api/datasets/" + dataset + "?expand=downloadsAllTime", { signal: controller.signal })
+      .then(function (response) {
+        if (!response.ok) throw new Error("Dataset downloads unavailable");
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.id !== dataset || !Number.isSafeInteger(data.downloadsAllTime) || data.downloadsAllTime < 0) return;
+        showDownloads(data.downloadsAllTime);
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({ count: data.downloadsAllTime, checkedAt: Date.now() }));
+        } catch (_) {
+          /* No persistent storage is required. */
+        }
+      })
+      .catch(function () {
+        /* Keep the last known total, or the plain dataset link, on failure. */
+      })
+      .finally(function () {
+        window.clearTimeout(timeout);
+      });
+  });
+
   if ("IntersectionObserver" in window) {
     // Reset only after a card is completely offscreen, with a little extra room
     // so small scroll adjustments cannot repeatedly restart its entrance.
