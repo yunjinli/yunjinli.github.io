@@ -44,6 +44,8 @@ npm run build
 Push to `master` to deploy. GitHub Actions also rebuilds daily at **04:23 UTC**
 to refresh citation snapshots. The `SEARCHAPI_API_KEY` belongs only in the
 repository's Actions secrets; publication links belong in BibTeX.
+For an immediate citation refresh, use Actions → Deploy site → Run workflow.
+Scheduled and manual runs request fresh counts even when the cache is recent.
 
 [`README_Orig.md`](README_Orig.md) and the other inherited theme guides are
 upstream reference material. Follow [CLAUDE.md](CLAUDE.md) for this site's setup.

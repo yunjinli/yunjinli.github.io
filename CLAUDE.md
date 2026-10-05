@@ -103,8 +103,10 @@ paper's title or BibTeX key does not require an alias or code update. BibTeX is
 the source of publication references; fetched counts live in the build cache.
 There is no separate per-paper YAML mapping or manually maintained count.
 
-The plugin requests each referenced author profile as needed, reusing successful
-snapshots for 24 hours and throttling failed attempts for one hour. With
+The plugin requests each referenced author profile as needed. Ordinary push and
+local builds reuse successful snapshots for 24 hours and throttle failed attempts
+for one hour. Scheduled and manual deployments request a fresh snapshot once per
+profile, regardless of the cached snapshot's age. With
 `SEARCHAPI_API_KEY` present, it uses
 [SearchApi's Google Scholar Author API](https://www.searchapi.io/docs/google-scholar-author).
 SearchApi (`searchapi.io`) is different from SerpApi. Without the key, local
@@ -118,11 +120,18 @@ builds try Scholar directly, which may be blocked; this does not stop the build.
   cache has no count until a fetch succeeds. Clearing the Jekyll cache or
   changing `_config.yml` can invalidate the local snapshot.
 
-Counts are build-time snapshots. The daily deployment at **04:23 UTC** refreshes
-eligible snapshots; visits to the website do not make SearchApi requests.
-GitHub may delay scheduled runs. To request a rebuild after changing content or
-credentials, use Actions → Deploy site → Run workflow on `master`; fresh
-snapshots still obey the 24-hour cache window.
+Counts are build-time snapshots. The daily deployment is scheduled for **04:23 UTC**;
+GitHub may delay its start. Each scheduled run requests fresh counts even if a
+content deployment refreshed them less than 24 hours ago. Visits to the website
+do not make SearchApi requests.
+
+To refresh immediately, use Actions → Deploy site → Run workflow on `master`.
+Scheduled and manual builds set `SCHOLAR_REFRESH_ID` to the workflow run ID and
+attempt number. This bypasses the cache age/retry window once per profile for
+that attempt, so multiple publication cards share one request. Failures preserve
+the previous counts and their check dates. Normal pushes still reuse recent data
+to avoid unnecessary API usage. Build logs state whether a snapshot was reused
+or a refresh was attempted.
 
 Set the secret under repository Settings → Secrets and variables → Actions,
 using the exact name `SEARCHAPI_API_KEY`. Never put it in BibTeX, `_config.yml`,
@@ -262,7 +271,7 @@ sample pages are reference material.
 | Formatting check fails           | Run `npm run format`, review and commit the result                                                                                                                  |
 | Build fails after a content edit | Check YAML indentation, BibTeX braces/commas, duplicate BibTeX keys and preview file paths                                                                          |
 | Citation count missing           | Confirm the article URL has `citation_for_view`, inspect the Google Scholar build log, and check the secret name/account quota; cached failures retry after an hour |
-| Old citation count remains       | Check the badge tooltip date and last successful daily run; cached counts intentionally survive fetch failures                                                      |
+| Old citation count remains       | Check the badge tooltip date and refresh messages in the latest build log; use Run workflow for a fresh request. Cached counts survive fetch failures               |
 | Dataset or star count missing    | Confirm the public dataset/repo identifier; browser API limits or blocked requests leave the link usable                                                            |
 | New styles missing               | Run a production build as well as preview; dynamic classes may need the safelist in `purgecss.config.js`                                                            |
 

@@ -100,13 +100,26 @@ module Jekyll
       raise "SearchApi returned invalid JSON"
     end
 
-    def self.load(cache, profile_id, now: Time.now.to_i, fetcher: method(:fetch))
+    def self.load(cache, profile_id, now: Time.now.to_i, fetcher: method(:fetch), refresh_id: ENV["SCHOLAR_REFRESH_ID"].to_s)
       profile_key = "profile-#{profile_id}"
       source = ENV["SEARCHAPI_API_KEY"].to_s.strip.empty? ? "direct" : "searchapi"
       attempt_key = "attempt-#{source}-#{profile_id}"
       previous = cache.key?(profile_key) ? cache[profile_key] : nil
-      return previous if previous && now - timestamp(previous["checked_at"]) < DAY
-      return previous if cache.key?(attempt_key) && now - cache[attempt_key] < RETRY_DELAY
+      if refresh_id.empty?
+        if previous && now - timestamp(previous["checked_at"]) < DAY
+          Jekyll.logger.info "Google Scholar:", "Using cached profile #{profile_id}, checked #{previous['checked_at']}."
+          return previous
+        end
+        return previous if cache.key?(attempt_key) && now - cache[attempt_key] < RETRY_DELAY
+      else
+        # Scheduled/manual runs must refresh even after a recent content deployment.
+        # Record the run before fetching so multiple cards share even a failed attempt.
+        refresh_key = "refresh-#{source}-#{profile_id}"
+        return previous if cache.key?(refresh_key) && cache[refresh_key] == refresh_id
+
+        cache[refresh_key] = refresh_id
+        Jekyll.logger.info "Google Scholar:", "Refreshing profile #{profile_id} for this workflow run."
+      end
 
       cache[attempt_key] = now
       begin

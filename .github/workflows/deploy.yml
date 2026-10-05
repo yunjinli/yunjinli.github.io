@@ -56,6 +56,8 @@ jobs:
         env:
           JEKYLL_ENV: production
           SEARCHAPI_API_KEY: ${{ github.event_name != 'pull_request' && secrets.SEARCHAPI_API_KEY || '' }}
+          # A unique attempt ID refreshes once per profile, regardless of cache age.
+          SCHOLAR_REFRESH_ID: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && format('{0}-{1}', github.run_id, github.run_attempt) || '' }}
         run: |
           pip3 install nbconvert==7.17.1
           npm run build

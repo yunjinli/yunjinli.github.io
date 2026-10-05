@@ -148,6 +148,48 @@ class ScholarProfileTest < Minitest::Test
     "https://scholar.google.com/citations?view_op=view_citation&user=#{profile_id}&citation_for_view=#{profile_id}:#{article_id}"
   end
 
+  def test_scheduled_refresh_bypasses_twenty_hour_cache_once_per_workflow_attempt
+    previous = parsed(count: "17")
+    previous["checked_at"] = Time.at(NOW - 20 * 3600).utc.iso8601
+    cache = { "profile-#{PROFILE}" => previous }
+    attempts = 0
+    fetcher = lambda do |_|
+      attempts += 1
+      parsed(count: (17 + attempts).to_s)
+    end
+    # Reproduce a content deployment followed by the next morning's schedule.
+    assert_equal previous, Jekyll::ScholarProfile.load(cache, PROFILE, now: NOW, refresh_id: "", fetcher: fetcher)
+    3.times do
+      profile = Jekyll::ScholarProfile.load(cache, PROFILE, now: NOW, refresh_id: "scheduled-run-1", fetcher: fetcher)
+      assert_equal 18, profile["articles"]["paper-id"]["citations"]
+    end
+    assert_equal 1, attempts
+    # A manual run or rerun must fetch again, even inside the retry window.
+    profile = Jekyll::ScholarProfile.load(cache, PROFILE, now: NOW + 5, refresh_id: "manual-run-1", fetcher: fetcher)
+    assert_equal 19, profile["articles"]["paper-id"]["citations"]
+    assert_equal 2, attempts
+  end
+
+  def test_failed_forced_refresh_preserves_snapshot_and_does_not_retry_for_every_card
+    [parsed, nil].each do |previous|
+      cache = previous ? { "profile-#{PROFILE}" => previous } : {}
+      attempts = 0
+      fetcher = lambda do |_|
+        attempts += 1
+        raise IOError, "offline"
+      end
+      3.times do
+        result = Jekyll::ScholarProfile.load(cache, PROFILE, now: NOW, refresh_id: "scheduled-run-1", fetcher: fetcher)
+        assert_same previous, result
+      end
+      assert_equal 1, attempts
+      assert_same previous, cache["profile-#{PROFILE}"]
+      result = Jekyll::ScholarProfile.load(cache, PROFILE, now: NOW + 5, refresh_id: "manual-run-1", fetcher: fetcher)
+      assert_same previous, result
+      assert_equal 2, attempts
+    end
+  end
+
   def test_bibtex_link_identifies_paper_after_title_changes_and_overrides_default_profile
     entry = { "title" => "Completely renamed", "google_scholar" => scholar_url }
     citation = Jekyll::ScholarProfile.citation(entry, default_profile_id: "another-profile", cache: {}, fetcher: lambda do |profile_id|
