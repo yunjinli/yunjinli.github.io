@@ -22,7 +22,8 @@ and these front matter fields:
 
 Keep `layout: about`, `permalink: /` and `portfolio: true` for the homepage.
 Set `profile.hover_image` to an optional second filename in `assets/img/` to
-crossfade to that portrait on mouse hover (currently the pixel-art version).
+flip the portrait like a card on mouse hover (currently to the pixel-art version).
+The two images form its front and back; leaving the frame reverses the flip.
 The original portrait stays visible on touch devices; reduced motion makes the
 swap instant. Remove `hover_image` to keep only the original portrait.
 YAML indentation matters. Use `>-` for multiline plain text, following the

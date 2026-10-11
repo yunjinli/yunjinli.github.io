@@ -27,25 +27,27 @@ layout: default
       </div>
     </div>
     <figure class="portfolio-portrait">
-      <div class="portfolio-portrait-frame">
-        <img
-          src="{{ page.profile.image | prepend: '/assets/img/' | relative_url }}"
-          alt="{{ page.profile.alt | escape }}"
-          width="400"
-          height="400"
-          fetchpriority="high"
-        >
-        {% if page.profile.hover_image %}
+      <div class="portfolio-portrait-frame{% if page.profile.hover_image %} portfolio-portrait-flippable{% endif %}">
+        <div class="portfolio-portrait-card">
           <img
-            class="portfolio-portrait-hover"
-            src="{{ page.profile.hover_image | prepend: '/assets/img/' | relative_url | bust_file_cache }}"
-            alt=""
-            aria-hidden="true"
+            src="{{ page.profile.image | prepend: '/assets/img/' | relative_url }}"
+            alt="{{ page.profile.alt | escape }}"
             width="400"
             height="400"
-            decoding="async"
+            fetchpriority="high"
           >
-        {% endif %}
+          {% if page.profile.hover_image %}
+            <img
+              class="portfolio-portrait-hover"
+              src="{{ page.profile.hover_image | prepend: '/assets/img/' | relative_url | bust_file_cache }}"
+              alt=""
+              aria-hidden="true"
+              width="400"
+              height="400"
+              decoding="async"
+            >
+          {% endif %}
+        </div>
       </div>
       <figcaption>{{ page.profile.caption | escape }}</figcaption>
     </figure>
