@@ -260,6 +260,21 @@ html[data-theme="dark"] .portfolio-page {
     height: auto;
     border-radius: 18px;
   }
+  .portfolio-portrait-hover {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover .portfolio-portrait-hover {
+      opacity: 1;
+    }
+  }
   &::before {
     content: "";
     position: absolute;

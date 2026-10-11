@@ -21,6 +21,10 @@ and these front matter fields:
 | `contact.topics_url`                                        | Open research topics destination; omit to hide this link                                        |
 
 Keep `layout: about`, `permalink: /` and `portfolio: true` for the homepage.
+Set `profile.hover_image` to an optional second filename in `assets/img/` to
+crossfade to that portrait on mouse hover (currently the pixel-art version).
+The original portrait stays visible on touch devices; reduced motion makes the
+swap instant. Remove `hover_image` to keep only the original portrait.
 YAML indentation matters. Use `>-` for multiline plain text, following the
 existing contact description. The biography supports Markdown links and emphasis.
 

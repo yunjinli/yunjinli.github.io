@@ -35,6 +35,17 @@ layout: default
           height="400"
           fetchpriority="high"
         >
+        {% if page.profile.hover_image %}
+          <img
+            class="portfolio-portrait-hover"
+            src="{{ page.profile.hover_image | prepend: '/assets/img/' | relative_url | bust_file_cache }}"
+            alt=""
+            aria-hidden="true"
+            width="400"
+            height="400"
+            decoding="async"
+          >
+        {% endif %}
       </div>
       <figcaption>{{ page.profile.caption | escape }}</figcaption>
     </figure>

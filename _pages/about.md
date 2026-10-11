@@ -6,6 +6,7 @@ portfolio: true
 eyebrow: Robotics & embodied intelligence
 profile:
   image: terminal-photo.jpg
+  hover_image: terminal-photo-pixel.png
   alt: Portrait of Jim Li
   caption: PhD student · TUM
 news: true
