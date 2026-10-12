@@ -24,8 +24,11 @@ Keep `layout: about`, `permalink: /` and `portfolio: true` for the homepage.
 Set `profile.hover_image` to an optional second filename in `assets/img/` to
 flip the portrait like a card on mouse hover (currently to the pixel-art version).
 The two images form its front and back; leaving the frame reverses the flip.
-The original portrait stays visible on touch devices; reduced motion makes the
-swap instant. Remove `hover_image` to keep only the original portrait.
+On touchscreens, tap once to flip and again to return. The portrait is also a
+keyboard-accessible button (Enter or Space), with its state exposed to screen
+readers. Reduced motion makes the swap instant. Without JavaScript, mouse hover
+still works and touch devices show the original portrait. Remove `hover_image`
+to keep only the original portrait, without a flip control.
 YAML indentation matters. Use `>-` for multiline plain text, following the
 existing contact description. The biography supports Markdown links and emphasis.
 
@@ -292,7 +295,7 @@ Routine content edits use the files above. Presentation changes use:
   publication cards, controls and citation badge.
 - `_includes/portfolio-projects.liquid`: project cards.
 - `_sass/_portfolio.scss`: scoped styles, responsive layout and motion.
-- `assets/js/portfolio.js`: navigation, inline expansion, abstract toggles,
+- `assets/js/portfolio.js`: portrait interaction, navigation, inline expansion, abstract toggles,
   scroll entrances, public API badges and video previews.
 - `_plugins/scholar-profile.rb`: Scholar reference parsing, API fetch and cache.
 - `_plugins/cache-bust.rb`: asset cache keys, including Sass source changes.

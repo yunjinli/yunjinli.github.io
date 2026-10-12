@@ -48,6 +48,9 @@ layout: default
             >
           {% endif %}
         </div>
+        {% if page.profile.hover_image %}
+          <button class="portfolio-portrait-toggle" type="button" aria-label="Show alternate portrait" aria-pressed="false" hidden></button>
+        {% endif %}
       </div>
       <figcaption>{{ page.profile.caption | escape }}</figcaption>
     </figure>

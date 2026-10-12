@@ -281,10 +281,38 @@ html[data-theme="dark"] .portfolio-page {
     transform: rotateY(180deg);
     pointer-events: none;
   }
+  .portfolio-portrait-toggle {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+
+    &:focus-visible {
+      outline: 2px solid var(--global-theme-color);
+      outline-offset: 5px;
+    }
+  }
+  &.is-flipped .portfolio-portrait-card {
+    transform: rotateY(180deg);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+  }
+  // Keep mouse hover working without JavaScript. Enhanced cards share one
+  // state for touch, mouse and keyboard, avoiding sticky hover on touchscreens.
   @media (hover: hover) and (pointer: fine) {
-    &.portfolio-portrait-flippable:hover .portfolio-portrait-card {
+    &.portfolio-portrait-flippable:not(.portfolio-portrait-interactive):hover .portfolio-portrait-card {
       transform: rotateY(180deg);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+    }
+    &:not(.portfolio-portrait-interactive):hover::before {
+      transform: rotate(0);
     }
   }
   &::before {
@@ -296,7 +324,7 @@ html[data-theme="dark"] .portfolio-page {
     transform: rotate(3deg);
     transition: transform 250ms ease;
   }
-  &:hover::before {
+  &.is-flipped::before {
     transform: rotate(0);
   }
 }

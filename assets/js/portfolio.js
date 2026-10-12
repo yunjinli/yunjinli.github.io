@@ -6,6 +6,29 @@
   var navigation = document.querySelector(".portfolio-nav-links");
   if (!navigation) return;
 
+  // A native button handles taps and keyboard activation, while a scroll gesture
+  // cancels its click. Mouse hover uses the same state, including on hybrid devices.
+  document.querySelectorAll(".portfolio-portrait-toggle").forEach(function (button) {
+    var frame = button.closest(".portfolio-portrait-frame");
+
+    function setFlipped(flipped) {
+      frame.classList.toggle("is-flipped", flipped);
+      button.setAttribute("aria-pressed", String(flipped));
+    }
+
+    button.addEventListener("click", function () {
+      setFlipped(button.getAttribute("aria-pressed") !== "true");
+    });
+    frame.addEventListener("pointerenter", function (event) {
+      if (event.pointerType === "mouse") setFlipped(true);
+    });
+    frame.addEventListener("pointerleave", function (event) {
+      if (event.pointerType === "mouse") setFlipped(false);
+    });
+    frame.classList.add("portfolio-portrait-interactive");
+    button.hidden = false;
+  });
+
   var links = Array.from(navigation.querySelectorAll('a[href^="#"]'));
   var sections = links.map(function (link) {
     return document.querySelector(link.getAttribute("href"));
