@@ -19,6 +19,7 @@ and these front matter fields:
 | `news`, `selected_papers`, `projects`                       | Show or hide the corresponding section; Research and Projects navigation follows these switches |
 | `contact.eyebrow`, `contact.heading`, `contact.description` | Student and collaborator contact copy, as plain text                                            |
 | `contact.topics_url`                                        | Open research topics destination; omit to hide this link                                        |
+| `contact.office`                                            | Office room below the contact links; omit to hide this line                                     |
 
 Keep `layout: about`, `permalink: /` and `portfolio: true` for the homepage.
 Set `profile.hover_image` to an optional second filename in `assets/img/` to

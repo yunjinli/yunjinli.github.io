@@ -6,15 +6,15 @@ research and project cards, and subtle scroll animations.
 
 ## Where to edit
 
-| Change                                                                         | File                                                   |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| Bio, research tagline, portrait, student contact text and research topics link | [`_pages/about.md`](_pages/about.md)                   |
-| Name, email, profile links, CV, site description and settings                  | [`_config.yml`](_config.yml)                           |
-| Affiliation logos and links                                                    | [`_data/affiliations.yml`](_data/affiliations.yml)     |
-| Publications, abstracts, Scholar links, GitHub repos and HF datasets           | [`_bibliography/papers.bib`](_bibliography/papers.bib) |
-| News                                                                           | New Markdown file in [`_news/`](_news/)                |
-| Projects                                                                       | New Markdown file in [`_projects/`](_projects/)        |
-| Colors, spacing and animations                                                 | [`_sass/_portfolio.scss`](_sass/_portfolio.scss)       |
+| Change                                                                                 | File                                                   |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Bio, research tagline, portrait, office, student contact text and research topics link | [`_pages/about.md`](_pages/about.md)                   |
+| Name, email, profile links, CV, site description and settings                          | [`_config.yml`](_config.yml)                           |
+| Affiliation logos and links                                                            | [`_data/affiliations.yml`](_data/affiliations.yml)     |
+| Publications, abstracts, Scholar links, GitHub repos and HF datasets                   | [`_bibliography/papers.bib`](_bibliography/papers.bib) |
+| News                                                                                   | New Markdown file in [`_news/`](_news/)                |
+| Projects                                                                               | New Markdown file in [`_projects/`](_projects/)        |
+| Colors, spacing and animations                                                         | [`_sass/_portfolio.scss`](_sass/_portfolio.scss)       |
 
 Routine content updates do not require editing templates or JavaScript.
 For copyable examples, field descriptions, metric updates and deployment
